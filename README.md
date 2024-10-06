@@ -200,7 +200,7 @@ The classes CheckBoxCellRender.java, CheckableItem.java and CheckedComboBox.java
 
 Here are the steps to package the project with all the dependencies from the **NetBeans 15 IDE** and create the client and server .jar to run both applications from a terminal:
 
-### 4.1. Set the `skipTests` property to ?true? in the `pom.xml` file.
+### 4.1. Set the 'skipTests' property to 'true' in the 'pom.xml' file.
 
 We will make sure that the 'skipTests' property is set to true, to avoid that the failed tests do not prevent us from performing the packaging process. To do this, in the '<properties>' section of the 'pom.xml' file we will add '<skipTests>true</skipTests>'.
 
@@ -243,20 +243,20 @@ To start the server, from the directory that contains the server .jar execute th
 ```
 java -jar TestChallengeServer.jar <port> <questions_base_directory>
 ```
-- The '<port>' parameter sets the port on which the server receives connection requests from the clients.
+- The <port> parameter sets the port on which the server receives connection requests from the clients.
 
-- The '<questions_base_directory>' parameter sets the base or root directory where the subdirectories of the subjects/topics with the questions are located.
+- The <questions_base_directory> parameter sets the base or root directory where the subdirectories of the subjects/topics with the questions are located.
 
 To start the client, from the directory that contains the client .jar execute the following command:
 
 ```
 java -jar TestChallengeClient.jar [<nick_name>] [<server_IP_or_server_DNS>] [<server_port>]
 ```
-- The '<nick_name>' parameter sets the unique nickname or alias with which the user signs up into the application.
+- The <nick_name> parameter sets the unique nickname or alias with which the user signs up into the application.
 
-- The '<server_IP_or_server_DNS>' parameter sets the IP or DNS of the server that is providing the service.
+- The <server_IP_or_server_DNS> parameter sets the IP or DNS of the server that is providing the service.
 
-- The '<server_port>' parameter sets the port that is actually providing the service on the server.
+- The <server_port> parameter sets the port that is actually providing the service on the server.
 
 As indicated by '[ ]', these parameters are optional: if you set them from the command line, they will be filled out automatically in the corresponding fields of the registration window that is shown before the GUI of the application is started. In the case they are not set before, you can set them in the registration window.
 
