@@ -114,7 +114,7 @@ I had not considered initially publishing this development and my native languag
 
 - Multivalor
 
-- Change the order of the options before sending the question (?desordenar_opciones? field of the JSON definition file, optional, defaults to 'true')
+- Change the order of the options before sending the question ("desordenar_opciones" field of the JSON definition file, optional, defaults to 'true')
 
 ### 3.13. What improvements/enhancements could be made to the application?
 
