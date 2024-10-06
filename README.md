@@ -78,7 +78,7 @@ The application has been conceived as a personal project, focused on functionali
 
 ### 3.11. Why has the application been implemented in Spanish?
 
-My apologies, but initially I had not considered publishing this development and my native language is Spanish so the user interface and the code of the application are written in this language.
+I had not considered initially publishing this development and my native language is Spanish so the user interface and the code of the application are written in this language. The localization of the application has been proposed as an improvement :-).
 
 ### 3.12. What features does the application include?
 
