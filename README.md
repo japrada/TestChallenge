@@ -38,7 +38,7 @@ The application allows you to define five types of questions depending on the ty
 
 - **Unica**: several options are presented and the user can select only one.
 
-- **M?ltiple**: several options are presented and the user can select more than one.
+- **Múltiple**: several options are presented and the user can select more than one.
 
 - **Texto**: the user has to type the answer to be sent.
 
@@ -72,15 +72,15 @@ No, by default when a question is sent to the connected users by the test server
 
 This behavior can be modified by including the optional field "desordenar_opciones" in the question definition file with the value "false". In that case, when the question is submitted by the server, the options are not unsorted. This can be useful for example in those questions that have an audio associated with them, so that the options of the question are temporarily ordered according to the listening of the audio.
 
-### 3.8. Why has the client been implemented using Java Swing?
+### 3.10. Why has the client been implemented using Java Swing?
 
 The application has been conceived as a personal project, focused on functionality and not on design. With Java Swing you can develop very sophisticated cross-platform desktop applications, and because of my knowledge and experience this has been the natural choice for me.
 
-### 3.9. Why has the application been implemented in Spanish?
+### 3.11. Why has the application been implemented in Spanish?
 
 My apologies, but initially I had not considered publishing this development and my native language is Spanish so the user interface and the code of the application are written in this language.
 
-### 3.10. What features does the application include?
+### 3.12. What features does the application include?
 
 1. Send/receive text chats at any time.
 
@@ -116,7 +116,7 @@ My apologies, but initially I had not considered publishing this development and
 
 - Change the order of the options before sending the question (?desordenar_opciones? field of the JSON definition file, optional, defaults to 'true')
 
-### 3.11. What improvements/enhancements could be made to the application?
+### 3.13. What improvements/enhancements could be made to the application?
 
 These are, for example, a bunch of them that could be pretty challenging:
 
@@ -150,25 +150,25 @@ These are, for example, a bunch of them that could be pretty challenging:
 
 15. Incorporate statistics (e.g. % of users who have answered a question correctly).
 
-### 3.12. On which operating systems can the application be run?
+### 3.14. On which operating systems can the application be run?
 
 In all those in which Java 11 or higher is installed. The development has been done on a Mac with version 11.0.21 of OpenJDK (Open JDK 11).
 
-3.13. What resolution is required to run the application on your desktop computer?
+### 3.14. What resolution is required to run the application on your desktop computer?
 
 The size of the main window of the GUI has been set to 1410x830 pixels. With a standard resolution of 1920x1080 there should be no problem to display the client application correctly.
 
-### 3.13 How has the application been tested?
+### 3.15 How has the application been tested?
 
 The application has been tested on a private network with four computers connected running Mac, Windows and Linux operating systems. It has also been tested over the Internet, exposing the connection port on the home router.
 
-### 3.14 Is authentication required to log into the application?
+### 3.16 Is authentication required to log into the application?
 
 No, the application doesn?t manage users and password credentials, and is not integrated with an IdP (Identity Provider) or another authentication system. Users log into the application using an alias or nickname that must be unique among the group of users that are connected to the same server.
 
 If you log into the application with a username's nickname or alias that is already registered, you'll get this error message:
 
-### 3.15 Why have I shared this application?
+### 3.17 Why have I shared this application?
 
 Firstly, I really believe that this application could be useful for those who want to create a knowledge base regarding a particular subject or topic and check their knowledge acquisition on a regular basis; it is really easy to set up (once you have install Java on your computer you only have to put the questions in a folder, then start the server and the clients, and you are done), and it doesn't need any kind of administration or configuration.
 
@@ -178,7 +178,7 @@ Thirdly, the application could be used as a prototype for those who want to lear
 
 Lastly, although I've been working for many years in the IT sector and have participated in the development of many systems in different companies, I've never contributed in any way to the community so let it be this little piece of software, my small and humble contribution to this great profession (software development).
 
-### 3.16 Which dependencies does the application have?
+### 3.18 Which dependencies does the application have?
 
 The application has the following dependencies:
 
@@ -190,7 +190,7 @@ The application has the following dependencies:
 
 - jlayer-1.0.1: JLayer is a library that decodes/plays/converts MPEG 1/2/2.5 Layer 1/2/3 (i.e. MP3) in real time for the JAVA(tm) platform.
 
-### 3.16 Credits
+### 3.19 Credits
 
 The classes MP3Player.java and PlayingTime.java are based on the [Java Swing audio sample application](https://www.codejava.net/coding/java-audio-player-sample-application-in-swing) developed by [Nam Ha Minh](https://www.codejava.net/nam-ha-minh).
 
@@ -218,7 +218,6 @@ We will type the Maven goal we want to run in the dialog box that appears (it ca
 
 The manifest file 'META-INF/MANIFEST.mf' includes the main class that is set in the maven-assembly-plugin configuration (see 'pom.xml' file) which can be either 'com.testchallenge.server.TestChallengeServer', for the server .jar, or 'com.testchallenge.client.gui.TestChallengeClient', for the client .jar.
 
-### 
 ### 4.5. Create the .jar of the server and the client app.
 
 #### 4.5.1. Server app
