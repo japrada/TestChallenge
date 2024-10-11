@@ -252,11 +252,11 @@ java -jar TestChallengeServer.jar <port> <questions_base_directory>
 To start the client, from the directory that contains the client .jar execute the following command:
 
 ```
-java -jar TestChallengeClient.jar [<nick_name>] [<server_IP_or_server_DNS>] [<server_port>]
+java -jar TestChallengeClient.jar [<nick_name>] [<server_IP_or_server_DNS_name>] [<server_port>]
 ```
 - The <nick_name> parameter sets the unique nickname or alias with which the user signs up into the application.
 
-- The <server_IP_or_server_DNS> parameter sets the IP or DNS of the server that is providing the service.
+- The <server_IP_or_server_DNS_name> parameter sets the IP or DNS name of the server that is providing the service.
 
 - The <server_port> parameter sets the port that is actually providing the service on the server.
 
