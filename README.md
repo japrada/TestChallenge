@@ -243,11 +243,11 @@ IMPORTANT: in the 'META-INF/MANIFEST.mf' file you must put the corresponding mai
 To start the server, from the directory that contains the server .jar execute the following command:
 
 ```
-java -jar TestChallengeServer.jar <port> <questions_base_directory>
+java -jar TestChallengeServer.jar <port> <questions_root_base_directory>
 ```
 - The <port> parameter sets the port on which the server receives connection requests from the clients.
 
-- The <questions_base_directory> parameter sets the base or root directory where the subdirectories of the subjects/topics with the questions are located.
+- The <questions_root_base_directory> parameter sets the base or root directory where the subdirectories of the subjects/topics with the questions are located.
 
 To start the client, from the directory that contains the client .jar execute the following command:
 
