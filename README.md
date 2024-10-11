@@ -50,13 +50,13 @@ The application allows you to define five types of questions depending on the ty
 
 Yes, in this version the image is displayed in the upper right corner of the panel containing the question. That is, a single image can be associated with a question, but not with each of the options of the question.
 
-The image (.gif, .png, .jpg, .jpeg) can be zoomed in by double-clicking on it and then resized by resizing the pop-up window that is shown (Note: the popup-window showing the image is closed once the focus is lost or when you close it specifically; this has been done this way on purpose).
+The image (.gif, .png, .jpg, .jpeg) can be zoomed in by double-clicking on it and then resized by resizing the pop-up window that is shown (Note: the popup-window showing the image is closed when the focus is lost or when you close it specifically; this has been done this way on purpose).
 
 ### 3.7. Is it possible to display questions containing audios?
 
 Yes, when a question has an audio file associated with it, it can be played by double-clicking on the mp3 icon that appears in the upper right corner of the panel displaying the question.
 
-In this version only .mp3 file playback has been implemented. You can pause it or stop it, but you cannot go forward or backward. (Note: the popup-window playing the .mp3 file is closed once the focus is lost or when you close it specifically; this has been done this way on purpose).
+In this version only .mp3 file playback has been implemented. You can pause it or stop it, but you cannot go forward or backward. (Note: the popup-window playing the .mp3 file is closed when the focus is lost or when you close it specifically; this has been done this way on purpose).
 
 ### 3.8. How are the questions of the test selected?
 
