@@ -1,0 +1,27 @@
+{
+	"id":3,
+	"texto":"Complete each phrase with the correct word:",
+	"tematica":"Inglés",
+	"nivel":"Normal",
+	"tipo":"Emparejada",
+	"opciones": [
+		 "Dan ____ GOT any brothers or sisters.",
+		 "____ your mobile phone GOT music on it?",
+		 "____ your friends GOT identical trainers?",
+		 "She ____ English twice a week.",
+		 "My friend and I ____ MEET every day.",
+		 "My mum ____ WEAR earrings.",
+		 "____ your dad WORK at the port?",
+		 "Katie ____ her school uniform.",
+		 "___ the film STARTING now? Yes, IT IS.",
+		 "Why ___ the baby CRYING. Because he's hungry.",
+		 "___ the children PLAYING football at the moment? No, they AREN’T.",
+		 "Where ____ you GOING? I’m going to the park."
+	],
+	"valores_opciones": [
+		["hasn't","Has","Have","studies","don't","doesn't","Does","likes","Is","is","Are","are"]
+	],
+	"respuestas": [
+		 "hasn't","Has","Have","studies","don't","doesn't","Does","likes","Is","is","Are","are"
+	]
+}

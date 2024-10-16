@@ -1,0 +1,13 @@
+{
+	"id":8,
+	"texto":"Escribe la siguiente frase en Inglés: 'Solías ver la televisión antes de comprarte el móvil? Sí solía verla todos los días.'",
+	"tematica":"Inglés",
+	"nivel":"Normal",
+	"tipo":"Texto",
+	"opciones": [
+	],
+	"respuestas": [
+		 "Did you use to watch TV before you bought the mobile phone? Yes, I used to see it every day.",
+		 "Did you use to watch TV before you bought the mobile phone? Yes, I used to see it every day"
+	]
+}

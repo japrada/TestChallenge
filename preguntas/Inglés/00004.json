@@ -1,0 +1,30 @@
+{
+	"id":4,
+	"texto":"Select the correct word for each phrase:",
+	"tematica":"Inglés",
+	"nivel":"Normal",
+	"tipo":"Multivalor",
+	"opciones": [
+		"___ the children playing football at the moment? No, THEY AREN’T.",
+		"Where ___ you going? I’m going to the park.",
+		"There ___ a party for my son’s birthday last week.",
+		"There ___ many guests at the party - only my husband.",
+		"There ___ a celebration in the park on New Year’s Eve and we took the children to it.",
+		"On New Year's Eve there ___ amazing fireworks in the sky.",
+		"There ___ an important football match last night.",
+		"There ___ tickets at the football match, so I watched it on TV with my son."
+	],
+	"valores_opciones": [
+		["Are","are","was","weren't","were"],
+		["Are","are","was","weren't","were"],
+		["Are","are","was","weren't","were"],
+		["Are","are","was","weren't","were"],
+		["Are","are","was","weren't","were"],
+		["Are","are","was","weren't","were"],
+		["Are","are","was","weren't","were"],
+		["Are","are","was","weren't","were"]
+	],
+	"respuestas": [
+		 "Are", "are", "was", "weren't", "was", "were", "was", "weren't"
+	]
+}

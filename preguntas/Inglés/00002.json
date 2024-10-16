@@ -1,0 +1,15 @@
+{
+	"id":2,
+	"texto":"His paintings are in museums ...",
+	"tematica":"Inglés",
+	"nivel":"Normal",
+	"tipo":"Unica",
+	"opciones": [
+		 "Picasso’s paintings are in museums.",
+		 "Picasso paintings are in museums.",
+		 "Picassos’s paintings are in museums."
+	],
+	"respuestas": [
+		 "Picasso’s paintings are in museums."
+	]
+}

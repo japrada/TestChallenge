@@ -1,0 +1,17 @@
+{
+	"id":10,
+	"texto":"Cómo se diría 'Yo veo la nueva bici de James todos los días'?",
+	"tematica":"Inglés",
+	"nivel":"Normal",
+	"tipo":"Múltiple",
+	"opciones": [
+		"I see James’s new bike every day.",
+		"I see James’ new bike every day.",
+		"I see new bike's James every day.",
+		"I see the new bike of James every day."
+	],
+	"respuestas": [
+		"I see James’s new bike every day.",
+		"I see the new bike of James every day."
+	]
+}

@@ -1,0 +1,16 @@
+{
+	"id":11,
+	"texto":"Cómo se diría 'Esas son las bicis de Caroline y Steven'?",
+	"tematica":"Inglés",
+	"nivel":"Normal",
+	"tipo":"Múltiple",
+	"opciones": [
+		"They are Caroline’s and Steven’s bikes.",
+		"They are Caroline and Steven’s bikes.",
+		"They are the bikes of Caroline and Steven."
+	],
+	"respuestas": [
+		"They are Caroline’s and Steven’s bikes.",
+		"They are the bikes of Caroline and Steven."
+	]
+}

@@ -1,0 +1,13 @@
+{
+	"id":7,
+	"texto":"Escribe la siguiente frase en Inglés: 'Había ensaladas y mucha comida en la fiesta.'",
+	"tematica":"Inglés",
+	"nivel":"Normal",
+	"tipo":"Texto",
+	"opciones": [
+	],
+	"respuestas": [
+		 "There were salads and there was a lot of meal in the party.",
+		 "There were salads and there was a lot of meal in the party"
+	]
+}

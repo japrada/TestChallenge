@@ -1,0 +1,18 @@
+{
+	"id":9,
+	"texto":"Cómo se diría 'Los coches de mis profesores están aparcados fuera'?",
+	"tematica":"Inglés",
+	"nivel":"Normal",
+	"tipo":"Múltiple",
+	"opciones": [
+		"My teachers' cars are parked outside.",
+		"The cars of my teachers are parked outside.",
+		"My teacher's cars are parked outside.",
+		"My teachers cars are parked outside."
+				
+	],
+	"respuestas": [
+		"My teachers' cars are parked outside.",
+		"The cars of my teachers are parked outside."
+	]
+}
