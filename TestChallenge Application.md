@@ -4,7 +4,7 @@ The questions (JSON files) are stored in the server's file system, in one of the
 
 The **“Multimedia”** subfolder stores the images and audio files that are associated with the JSON files that define the questions of the subject/topic **“Inglés”**.
 
-![Questions for the topic "Inglés"](screenshots/Directorio_preguntas.png)
+<img src="screenshots/Directorio_preguntas.png" alt="Texto alternativo" width="400" height="400">
 
 ### 2. What types of questions can be defined?
 
