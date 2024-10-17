@@ -4,11 +4,7 @@ The questions (JSON files) are stored in the server's file system, in one of the
 
 The **“Multimedia”** subfolder stores the images and audio files that are associated with the JSON files that define the questions of the subject/topic **“Inglés”**.
 
-<div style="text-align: center;">
-    <img src="screenshots/Directorio_preguntas.png" width="400" height="400">
-<p><strong>Questions for the topic "Inglés"</strong></p>
-</div>
-
+![Questions for the topic "Inglés"](screenshots/Directorio_preguntas.png)
 
 ### 2. What types of questions can be defined?
 
@@ -18,11 +14,8 @@ The application allows you to define five types of questions depending on the ty
 
     Example. The question definition:
 
-<div style="text-align: center;">
-    <img src="screenshots/Question_definition_of_type_Unica.png" width="800" height="400">
-<p><strong>Definition of a question of type "Unica"</strong></p>
-</div>
-
+![Definition of a question of type "Unica"](screenshots/Question_definition_of_type_Unica.png)
+    
     renders to:
 
 ![Rendering of a question definition of type "Unica"](screenshots/Rendering_of_question_definition_of_type_Unica.png)
