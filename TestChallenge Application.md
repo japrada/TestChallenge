@@ -15,7 +15,6 @@ The application allows you to define five types of questions depending on the ty
     Example. The question definition:
 
 ![Definition of a question of type "Unica"](screenshots/Question_definition_of_type_Unica.png)
-    
     renders to:
 
 ![Rendering of a question definition of type "Unica"](screenshots/Rendering_of_question_definition_of_type_Unica.png)
@@ -25,7 +24,6 @@ The application allows you to define five types of questions depending on the ty
     Example. The question definition:
 
 ![Definition of a question of type "Múltiple"](screenshots/Question_definition_of_type_Múltiple.png)
-
     renders to:
 
 ![Rendering of a question definition of type "Múltiple"](screenshots/Rendering_of_question_definition_of_type_Múltiple.png)
@@ -35,7 +33,6 @@ The application allows you to define five types of questions depending on the ty
     Example. The question definition:
 
 ![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Texto.png)
-
     renders to:
 
 ![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Texto.png)
@@ -45,15 +42,12 @@ The application allows you to define five types of questions depending on the ty
     Example 1. The question definition:
 
 ![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Emparejada_1.png)
-
    renders to:
 
 ![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Emparejada_1.png)
-
     Example 2. The question definition that has associated an image:
 
 ![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Emparejada_2.png)
-
     renders to:
 
 ![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Emparejada_2.png)
@@ -63,15 +57,12 @@ The application allows you to define five types of questions depending on the ty
     Example 1. The question definition that has associated an mp3 audio:
 
 ![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Multivalor_1.png)
-
     renders to:
 
 ![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Multivalor_1.png)
-
     Example 2. The question definition:
 
 ![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Multivalor_2.png)
-
     renders to:
 
 ![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Multivalor_2.png)
