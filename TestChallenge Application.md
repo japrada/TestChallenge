@@ -152,3 +152,9 @@ In the same way, any user who has not yet sent a response can stop the execution
 
 A user can extend the time limit for answering a question by first selecting the number of seconds to be added and then clicking the “Ampliar” button. Similarly to de "Pause" option, the requested extension applies to all users, so this option increases everyone's chances.
 
+### 13. Reviewing the results of the test
+
+Once the test execution has been completed, users can review the results through the “Ver respuestas” option. For each question sent by the server, the options answered correctly are shown in green and those answered incorrectly are shown in red. In the cases where the user has not submitted an answer, the question is shown with the correct options, but without color coding. 
+
+
+
