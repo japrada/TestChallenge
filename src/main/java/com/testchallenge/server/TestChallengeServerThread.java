@@ -227,6 +227,10 @@ public final class TestChallengeServerThread extends Thread {
                                 break;
                             case PAUSAR_TEST:
                                 testChallengeServer.getTestServer().pauseTest(nickname);
+                                enviarMensaje(
+                                        String.format(
+                                                "El usuario @%s ha solicitado pausar el test.",
+                                                nickname));
                                 break;
                             case REANUDAR_TEST:
                                 testChallengeServer.getTestServer().resumeTest(nickname);

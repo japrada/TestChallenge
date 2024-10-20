@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with 'TestChallenge'. If not, see <https://www.gnu.org/licenses/>.
  */
-
 package com.testchallenge.server;
 
 import com.testchallenge.model.Configuracion;
@@ -334,7 +333,7 @@ public class TestServer extends Thread {
         // NOTA: además, no se debe notificar al que ha enviado el mensaje (nickname)
         if (!isPaused) {
             isPaused = Boolean.TRUE;
-            // @TODO: Notificar a los clientes conectados que TODAVÍA NO HAN enviado la respuesta para ajustar la UI
+            // Notificar a los clientes conectados que TODAVÍA NO HAN enviado la respuesta para ajustar la UI
             enviarPauseResume(new Mensaje(TipoMensaje.TEST_PAUSADO), nickname);
         }
     }
@@ -537,7 +536,7 @@ public class TestServer extends Thread {
      */
     private void enviarPreguntas() {
         // Enviar las preguntas
-        int i = 0;
+        int i = 1;
 
         try {
             for (Pregunta pregunta : preguntasSeleccionadas) {
@@ -548,7 +547,7 @@ public class TestServer extends Thread {
                 // Pregunta enviada
                 preguntaEnviada = pregunta;
                 // Título de la pregunta
-                String preguntaTitle = String.format("Pregunta '%d / %d'", ++i, preguntasSeleccionadas.size());
+                String preguntaTitle = String.format("Pregunta '%d / %d'", i, preguntasSeleccionadas.size());
                 pregunta.setTitle(preguntaTitle);
                 pregunta.setNumeroOrden(i);
 
@@ -570,23 +569,24 @@ public class TestServer extends Thread {
                 // Antes de lanzar la siguiente pregunta, actualizar la tabla de resultados con las puntuaciones obtenidas
                 logger.info(String.format("Resultados de la pregunta '%d':%s", i, puntuaciones));
 
+                actualizarResultados();
+
+                // y enviar un mensaje con las puntuaciones obtenidas
                 enviarMensaje(new Mensaje(String.format("\nPuntuaciones: %s\n", puntuacionesToString())));
 
-                actualizarResultados();
+                // Enviamos la siguiente pregunta
+                i++;
+
             }
         } catch (InterruptedException ie) {
-            logger.severe(ie.getMessage());
-            // A la puntuación obtenida por el usuario que ha detenido el test se le restan los puntos 
-            // correspondientes a las preguntas que el servidor no ha enviado al detenerse el test.
+            // Si un usuario ha detenido el test ...
+            logger.info(ie.getMessage());
+
+            // Se actualizan los resultados a partir de los puntos obtenidos en la última pregunta  
+            // teniendo encuenta, además, la penalización que se le aplica al usuario que ha detenido el test.
             Integer penalizacion = (preguntasSeleccionadas.size() - i + 1);
+            actualizarResultados(penalizacion, nickname);
 
-            Integer puntuacionActual = resultados.get(nickname);
-
-            if (puntuacionActual != null) {
-                resultados.put(nickname, puntuacionActual - penalizacion);
-            } else {
-                resultados.put(nickname, -penalizacion);
-            }
             enviarMensaje(new Mensaje(
                     String.format(
                             "\n[•] El usuario '%s' ha sido penalizado con '%d' puntos por cancelar el test.",
@@ -775,17 +775,39 @@ public class TestServer extends Thread {
      * obtenidas los usuarios que han enviado una pregunta.
      */
     private void actualizarResultados() {
-        // Encontramos al ganador (sólo hay uno, el primero que contestó), lo añadimos a la lista y salimos
         for (String nicknameKey : puntuaciones.keySet()) {
             Puntuacion puntuacion = puntuaciones.get(nicknameKey);
             if (puntuacion != null) {
-                Integer puntuacionActual = resultados.get(nicknameKey);
-                if (puntuacionActual != null) {
-                    resultados.put(nicknameKey, puntuacionActual + puntuacion.getPuntos());
+                Integer resultadoParcial = resultados.get(nicknameKey);
+                if (resultadoParcial != null) {
+                    resultados.put(nicknameKey, resultadoParcial + puntuacion.getPuntos());
                 } else {
                     resultados.put(nicknameKey, puntuacion.getPuntos());
                 }
             }
+        }
+    }
+
+    /**
+     * Método helper para actualizar los resultados teniendo en cuenta la penalización.
+     * 
+     * Además, a todos los que no hayan enviado la respuesta cuando se detiene el test se le restará 
+     * un punto y, adicionalmente, al usuario que ha detenido el test, también, por respuesta no enviada.
+     * 
+     * @param penalizacion número de preguntas no contestadas (nº preguntas totales - nº pregunta actual + 1)
+     * @param nickname nickname del usuario que ha detenido el test y al que se le aplica la penalización
+     */
+    private void actualizarResultados(Integer penalizacion, String nickname) {
+        // y a la puntuación obtenida por el usuario que ha detenido el test se le restan los puntos 
+        // correspondientes a las preguntas que el servidor no ha enviado al detenerse el test.
+        actualizarResultados();
+
+        Integer resultadoActual = resultados.get(nickname);
+
+        if (resultadoActual != null) {
+            resultados.put(nickname, resultadoActual - penalizacion);
+        } else {
+            resultados.put(nickname, -penalizacion);
         }
     }
 
@@ -812,7 +834,7 @@ public class TestServer extends Thread {
             }
         }
 
-        // Envía una copia del ranking actualizado que se almacena en el servidor
+        // Envía una copia del ranking actualizado almacenado en el servidor
         return new Ranking(new HashMap<>(ranking));
     }
 }
