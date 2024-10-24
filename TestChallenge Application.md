@@ -142,25 +142,45 @@ The following screenshots show the client application GUI executing on a Windows
 
 ### 10. Pausing and resuming a test execution
 
-Any user who has not yet sent a response can pause the execution of the test in progress. As soon as the execution is paused, the countdown stops for the rest of the users as well. Any user can resume the execution of a test to send the answer to the question; at that moment, the countdown is reactivated also for the rest of the users.
+Any user who has not yet sent a response can pause the execution of the test in progress. As soon as the execution is paused, the countdown stops for the rest of the users as well. 
+
+![Pausing a test execution](screenshots/Pause_test_execution.png)
+
+Any user can resume the execution of a test to send the answer to the question; at that moment, the countdown is reactivated also for the rest of the users.
 
 [**Image to be added**]
 
 ### 11. Stopping a test execution
 
-In the same way, any user who has not yet sent a response can stop the execution of the test in progress. At the moment the user confirms the operation, the system penalizes the user who has made the request with as many negative points as questions were still pending to be sent, plus an additional negative point for not having sent the answer to the question in progress. In addition, all users who had not sent the answer at the time of stopping the test are also assigned a negative point.
+In the same way, any user who has not yet sent a response can stop the execution of the test in progress. 
 
- [**Image to be added**]
+![Stopping a test execution](screenshots/Stop_test_execution.png)
+
+At the moment the user confirms the operation, the system penalizes the user who has made the request with as many negative points as questions were still pending to be sent, plus an additional negative point for not having sent the answer to the question in progress. In addition, all users who had not sent the answer at the time of stopping the test are also assigned a negative point.
  
+ ![Test execution stopped with negative points](screenshots/Test_execution_stopped_with_negative_points.png)
+
+[**Image to be added: Resume**]
+
 ### 12. Extending the time limit to answer a question
 
 A user can extend the time limit for answering a question by first selecting the number of seconds to be added and then clicking the “Ampliar” button. Similarly to de "Pause" option, the requested extension applies to all users, so this option increases everyone's chances.
 
- [**Image to be added**]
- 
+![Extending the time limit](screenshots/Extend_time_execution.png)
+
 ### 13. Reviewing the results of the test
 
-Once the test execution has been completed, users can review the results through the “Ver respuestas” option. For each question sent by the server, the options answered correctly are shown in green and those answered incorrectly are shown in red. In the cases where the user has not submitted an answer, the question is shown with the correct options, but without color coding. 
+Once the test execution has been completed, users can review the results through the **“Ver respuestas”** option. After selecting this option the buttons **"Anterior"** and **"Siguiente"** are enabled to move forwards or backwards through the list of the questions of the test and review the results.
 
- [**Image to be added**]
+ For each question sent by the server, the options answered correctly are shown in green and those answered incorrectly are shown in red. In the cases where the user has not submitted an answer, the question is shown with the correct options, but without color coding. In the following screenshots it can be seen different examples.
+
+![Review of the questions with correct and incorrect answers on a Mac system](screenshots/Results_review_question_with_correct_and_incorrect_answers_Mac.png)
+
+![Review of the questions with correct and incorrect answers on a Windows system](screenshots/Results_Review_question_with_correct_and_incorrect_answers_Windows.png)
+
+![Review of the questions with correct and incorrect answers on a Mac system](screenshots/Results_review_question_with_incorrect_answers_Windows.png)
+
+![Review of the questions with an incorrect answer on a Windows system](screenshots/Results_review_question_with_an_incorrect_answer_Windows.png)
+
+
 
