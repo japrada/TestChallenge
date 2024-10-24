@@ -142,7 +142,7 @@ The following screenshots show the client application GUI executing on a Windows
 
 ### 10. Pausing and resuming a test execution
 
-Any user who has not yet sent a response can pause the execution of the test in progress. As soon as the execution is paused, the countdown stops for all other users as well. Any user can resume the execution of a test to send the answer to the question; at that moment, the countdown is reactivated also for the rest of the users.
+Any user who has not yet sent a response can pause the execution of the test in progress. As soon as the execution is paused, the countdown stops for the rest of the users as well. Any user can resume the execution of a test to send the answer to the question; at that moment, the countdown is reactivated also for the rest of the users.
 
 [**Image to be added**]
 
