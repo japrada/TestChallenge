@@ -154,7 +154,7 @@ Any user can resume the execution of a test to send the answer to the question; 
 
 In the same way, any user who has not yet sent a response can stop the execution of the test in progress. 
 
-<div style="border: 1px solid black;">![Stopping a test execution](screenshots/Stop_test_execution.png)</div>
+<img src="screenshots/Stop_test_execution.png" alt="Stopping a test execution" title="Stopping a test execution" style="border: 2px solid black;">
 
 At the moment the user confirms the operation, the system penalizes the user who has made the request with as many negative points as questions were still pending to be sent, plus an additional negative point for not having sent the answer to the question in progress. In addition, all users who had not sent the answer at the time of stopping the test are also assigned a negative point.
  
