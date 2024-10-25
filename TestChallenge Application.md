@@ -20,7 +20,7 @@
 
 [10. Pausing and resuming a test execution.](#10-pausing-and-resuming-a-test-execution)
 
-[11. Stopping a test execution](#11-stopping-a-test-execution)
+[11. Stopping a test execution.](#11-stopping-a-test-execution)
 
 [12. Extending the time limit to answer a question.](#12-extending-the-time-limit-to-answer-a-question)
 
