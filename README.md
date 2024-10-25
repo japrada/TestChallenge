@@ -1,8 +1,43 @@
-## 1. The Test Challenge Application
+
+- [1. The Test Challenge Application.](#1-the-test-challenge-application)
+- [2. Description.](#2-description)
+- [3. FAQs.](#3-faqs)
+  - [3.1. Which use cases can this project cover?](#31-which-use-cases-can-this-project-cover)
+  - [3.2. How does the application work at a high level?](#32-how-does-the-application-work-at-a-high-level)
+  - [3.3. How are questions created?](#33-how-are-questions-created)
+  - [3.4. Where are the questions stored?](#34-where-are-the-questions-stored)
+  - [3.5. What types of questions can be defined?](#35-what-types-of-questions-can-be-defined)
+  - [3.6. Is it possible to display questions containing images?](#36-is-it-possible-to-display-questions-containing-images)
+  - [3.7. Is it possible to display questions containing audios?](#37-is-it-possible-to-display-questions-containing-audios)
+  - [3.8. How are the questions of the test selected?](#38-how-are-the-questions-of-the-test-selected)
+  - [3.9. Is the order of the options shown in the questions always the same?](#39-is-the-order-of-the-options-shown-in-the-questions-always-the-same)
+  - [3.10. Why has the client been implemented using Java Swing?](#310-why-has-the-client-been-implemented-using-java-swing)
+  - [3.11. Why has the application been implemented in Spanish?](#311-why-has-the-application-been-implemented-in-spanish)
+  - [3.12. What features does the application include?](#312-what-features-does-the-application-include)
+  - [3.13. What improvements/enhancements could be made to the application?](#313-what-improvementsenhancements-could-be-made-to-the-application)
+  - [3.14. On which operating systems can the application be run?](#314-on-which-operating-systems-can-the-application-be-run)
+  - [3.15. What resolution is required to run the application on your desktop computer?](#315-what-resolution-is-required-to-run-the-application-on-your-desktop-computer)
+  - [3.16 How has the application been tested?](#316-how-has-the-application-been-tested)
+  - [3.17 Is authentication required to log into the application?](#317-is-authentication-required-to-log-into-the-application)
+  - [3.18 Why have I shared this application?](#318-why-have-i-shared-this-application)
+  - [3.19 Which dependencies does the application have?](#319-which-dependencies-does-the-application-have)
+  - [3.20 Credits](#320-credits)
+- [4. Packaging and creation of the client and server .jars of the application](#4-packaging-and-creation-of-the-client-and-server-jars-of-the-application)
+  - [4.1. Set the 'skipTests' property to 'true' in the 'pom.xml' file.](#41-set-the-skiptests-property-to-true-in-the-pomxml-file)
+  - [4.2. Select the pom.xml file and in the context menu, the "Run Maven \>", "Goals ..." option.](#42-select-the-pomxml-file-and-in-the-context-menu-the-run-maven--goals--option)
+  - [4.3. Change the file extension of 'TestChallenge-1.0-jar-with-dependencies.jar' to .zip.](#43-change-the-file-extension-of-testchallenge-10-jar-with-dependenciesjar-to-zip)
+  - [4.4. Unzip the .zip file to create the 'TestChallenge-1.0-jar-with-dependencies' folder.](#44-unzip-the-zip-file-to-create-the-testchallenge-10-jar-with-dependencies-folder)
+  - [4.5. Create the .jar of the server and the client app.](#45-create-the-jar-of-the-server-and-the-client-app)
+    - [4.5.1. Server app.](#451-server-app)
+    - [4.5.2. Client app.](#452-client-app)
+- [5. Execution of the server and client applications.](#5-execution-of-the-server-and-client-applications)
+- [6. License.](#6-license)
+
+## 1. The Test Challenge Application.
 
 The application allows to evaluate the level of knowledge of a group of users (or a single user) on a subject/topic by performing tests that run simultaneously on all connected systems. Users accumulate points according to the correctness and speed with which they submit their answers within a time limit. During the execution of the test the system sends notifications of the partial results as users answer the questions. At the end of the test they can review the answers sent with their correction (incorrect answers are shown in red and  correct answers in green), the points obtained and their position in the ranking.
 
-## 2. Description
+## 2. Description.
 
 The project implements a client-server application to chat and perform group tests in a gamified way by selecting the subject/topic, the level of difficulty and the type of questions, the number of questions of the test, and the time limit to send the answers. On one hand, it consists of a Java server application that manages the communication between users, the messages interchanged between them and the server, and the execution of the tests. On the other hand, it is provided a Java Swing desktop client application with which users, after registering with an alias or nickname, can chat, launch test challenges to the group, review the answers sent and the results obtained according to their correctness.
 
@@ -10,7 +45,7 @@ Gamification is implemented by introducing a time limit for submitting the answe
 
 If a user considers they cannot send the answer within the established time limit, they can request either a time extension or pause the execution of the test. If a user extends the time limit of a question, it is also extended for the rest of the users; similarly, if a user requests to pause a test, it is also paused for the rest of the users, giving them more time to answer. In this version no policies have been implemented to penalize users when they request to extend the number of seconds or pause the test execution (maybe some one can change this :-)). The options to pause/resume a test will only be available to those users who have not submitted a response yet. Any user can stop the test at any given time, but  the user who requests that will receive as many negative points as questions are pending to be sent by the server.
 
-## 3. FAQs
+## 3. FAQs.
 
 ### 3.1. Which use cases can this project cover?
 
@@ -222,14 +257,14 @@ The manifest file 'META-INF/MANIFEST.mf' includes the main class that is set in 
 
 ### 4.5. Create the .jar of the server and the client app.
 
-#### 4.5.1. Server app
+#### 4.5.1. Server app.
 
 From the 'TestChallenge-1.0-jar-with-dependencies' folder created after unzipping the 'TestChallenge-1.0-jar-with-dependencies.zip' archive, execute the following command:
 
 ```
 jar -cfmv TestChallengeServer.jar META-INF/Manifest.mf org/apache/* org/jaudiotagger/* com/google/* com/testchallenge/server/* com/testchallenge/model/* images/* javazoom/*
 ```
-#### 4.5.2. Client app
+#### 4.5.2. Client app.
 
 From the  'TestChallenge-1.0-jar-with-dependencies' folder created after unzipping the 'TestChallenge-1.0-jar-with-dependencies.zip'  archive, execute the following command:
 
@@ -238,7 +273,7 @@ jar -cfmv TestChallengeClient.jar META-INF/Manifest.mf org/apache/* org/jaudiota
 ```
 IMPORTANT: in the 'META-INF/MANIFEST.mf' file you must put the corresponding main client or server class before executing the .jar creation. 
 
-## 5. Execution of the server and client applications
+## 5. Execution of the server and client applications.
 
 To start the server, from the directory that contains the server .jar execute the following command:
 
@@ -262,6 +297,6 @@ java -jar TestChallengeClient.jar [<nick_name>] [<server_IP_or_server_DNS_name>]
 
 As indicated by '[ ]', these parameters are optional: if you set them from the command line, they will be filled out automatically in the corresponding fields of the registration window that is shown before the GUI of the application is started. In the case they are not set before, you can set them in the registration window.
 
-## 6. License
+## 6. License.
 
 This project is licensed under the terms of the [GNU General Public License version 3 (GPLv3)](https://www.gnu.org/licenses/gpl-3.0.html). See the LICENSE.txt file for more details.
