@@ -1,4 +1,32 @@
-### 1. Where are the questions stored?
+## Table of Contents
+
+[1. Where are the questions stored?](#1-where-are-the-questions-stored)
+
+[2. What types of questions can be defined?](#2-what-types-of-questions-can-be-defined)
+
+[3. Is it possible to display questions containing images?](#3-is-it-possible-to-display-questions-containing-images)
+
+[4. Is it possible to display questions containing audios?](#4-is-it-possible-to-display-questions-containing-audios)
+
+[5. Is the order of the options shown in the questions always the same?](#5-is-the-order-of-the-options-shown-in-the-questions-always-the-same)
+
+[6. Is authentication required to log into the application?](#6-is-authentication-required-to-log-into-the-application)
+
+[7. Is authentication required to log into the application?](#7-is-authentication-required-to-log-into-the-application)
+
+[8. Is it possible to upload new questions to the server?](#8-is-it-possible-to-upload-new-questions-to-the-server)
+
+[9. Application GUI executing on different operating systems](#9-application-gui-executing-on-different-operating-systems)
+
+[10. Pausing and resuming a test execution](#10-pausing-and-resuming-a-test-execution)
+
+[11. Stopping a test execution](#11-stopping-a-test-execution)
+
+[12. Extending the time limit to answer a question](#12-extending-the-time-limit-to-answer-a-question)
+
+[13. Reviewing the results of the test](#13-reviewing-the-results-of-the-test)
+
+## 1. Where are the questions stored?
 
 The questions (JSON files) are stored in the server's file system, in one of the subdirectories of the base/root directory that is specified in the corresponding server startup parameter. Each subdirectory represents a subject/topic and its name is displayed in the client application on a drop-down list.
 
@@ -6,7 +34,7 @@ The **“Multimedia”** subfolder stores the images and audio files that are as
 
 ![Questions for the topic "Inglés"](screenshots/Directorio_preguntas.png)
 
-### 2. What types of questions can be defined?
+## 2. What types of questions can be defined?
 
 The application allows you to define five types of questions depending on the type of the answer:
 
@@ -76,7 +104,7 @@ The application allows you to define five types of questions depending on the ty
 
   ![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Multivalor_2.png)
 
-### 3. Is it possible to display questions containing images?
+## 3. Is it possible to display questions containing images?
 
 Yes, the image is displayed in the upper right corner of the panel containing the question. That is, in this version of the application a single image can be associated with a question, but not with each of the options of the question. 
 
@@ -86,7 +114,7 @@ The image (.gif, .png, .jpg, .jpeg) can be zoomed in by double-clicking on it an
 
 ![Pop up window showing the associated image](screenshots/Chapter_3_image_2.png)
 
-### 4. Is it possible to display questions containing audios?
+## 4. Is it possible to display questions containing audios?
 
 Yes, when a question has an mp3 audio file associated with it, it can be played by double-clicking on the “Mp3” icon that appears in the upper right corner of the panel displaying the question. 
 
@@ -96,7 +124,7 @@ In this version only .mp3 file playback has been implemented. You can pause it o
 
 ![Pop up window showing the associated audio](screenshots/Chapter_4_image_2.png)
 
-### 5. Is the order of the options shown in the questions always the same?
+## 5. Is the order of the options shown in the questions always the same?
 
 No, by default when a question is sent to the connected users by the test server the options it contains are randomly reordered so that the order in which they are presented may change from one test execution to another. This is done to make it more difficult to memorize the answers. 
 
@@ -104,19 +132,19 @@ This behavior can be modified by including the optional field “desordenar_opci
 
 ![Question with "desordenar_opciones" set to "false"](screenshots/Chapter_5_image_1.png)
 
-### 6. Is authentication required to log into the application?
+## 6. Is authentication required to log into the application?
 
 No, the application doesn’t manage users and password credentials, and it is not integrated with an IdP (Identity Provider) or another authentication system. Users log into the application using an alias/nickname that must be unique among the group of users that are connected to the same server.
 
 ![User registration window dialog](screenshots/Chapter_6_image_1.png)
 
-### 7. Is authentication required to log into the application?
+## 7. Is authentication required to log into the application?
 
 If you log into the application with a username’s nickname/alias that is already registered, you’ll get this error message:
 
 ![User registration window dialog: duplicated nickname](screenshots/Chapter_7_image_1.png)
 
-### 8. Is it possible to upload new questions to the server?
+## 8. Is it possible to upload new questions to the server?
 
 Yes, a functionality has been implemented to enable users to upload new questions to the server together with the multimedia file (image or audio) that is specified in the JSON definition file.
 
@@ -125,7 +153,7 @@ Yes, a functionality has been implemented to enable users to upload new question
 As can be seen in above screenshot, the button “Subir pregunta” opens a pop-up window from which the user can select the new question that wants to upload to the server, together with the file of the image or audio associated with the question (if any), that must be stored in the “Multimedia” subdirectory. The question (and the multimedia file) is uploaded to the subject/topic folder that is selected in the drop-down list on the server at the moment of confirming the operation. Once the question has been uploaded, a chat is sent from the server to inform all the clients.
 
 
-### 9. Application GUI executing on different operating systems.
+## 9. Application GUI executing on different operating systems
 
 The following screenshots show the client application GUI executing on a Windows,  Linux, and Mac system:
 
@@ -149,7 +177,7 @@ The following screenshots show the client application GUI executing on a Windows
 
   ![MacOs GUI](screenshots/Chapter_9_image_5.png)
 
-### 10. Pausing and resuming a test execution
+## 10. Pausing and resuming a test execution
 
 Any user who has not yet sent a response can pause the execution of the test in progress. As soon as the execution is paused, the countdown stops for the rest of the users as well. 
 
@@ -159,7 +187,7 @@ Any user can resume the execution of a test to send the answer to the question; 
 
 ![Resuming a test execution](screenshots/Resuming_a_test_execution.png)
 
-### 11. Stopping a test execution
+## 11. Stopping a test execution
 
 In the same way, any user who has not yet sent a response can stop the execution of the test in progress. 
 
@@ -169,13 +197,13 @@ At the moment the user confirms the operation, the system penalizes the user who
  
  ![Test execution stopped with negative points](screenshots/Test_execution_stopped_with_negative_points.png)
 
-### 12. Extending the time limit to answer a question
+## 12. Extending the time limit to answer a question
 
 A user can extend the time limit for answering a question by first selecting the number of seconds to be added and then clicking the “Ampliar” button. Similarly to de "Pause" option, the requested extension applies to all users, so this option increases everyone's chances.
 
 ![Extending the time limit to answer a question](screenshots/Extending_the_time_limit_to_answer_a_question.png)
 
-### 13. Reviewing the results of the test
+## 13. Reviewing the results of the test
 
 Once the test execution has been completed, users can review the results through the **“Ver respuestas”** option. After selecting this option the buttons **"Anterior"** and **"Siguiente"** are enabled to move forwards or backwards through the list of the questions of the test and review the results.
 
