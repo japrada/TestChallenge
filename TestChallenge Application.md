@@ -16,15 +16,15 @@
 
 [8. Is it possible to upload new questions to the server?](#8-is-it-possible-to-upload-new-questions-to-the-server)
 
-[9. Application GUI executing on different operating systems](#9-application-gui-executing-on-different-operating-systems)
+[9. Application GUI executing on different operating systems.](#9-application-gui-executing-on-different-operating-systems)
 
-[10. Pausing and resuming a test execution](#10-pausing-and-resuming-a-test-execution)
+[10. Pausing and resuming a test execution.](#10-pausing-and-resuming-a-test-execution)
 
 [11. Stopping a test execution](#11-stopping-a-test-execution)
 
-[12. Extending the time limit to answer a question](#12-extending-the-time-limit-to-answer-a-question)
+[12. Extending the time limit to answer a question.](#12-extending-the-time-limit-to-answer-a-question)
 
-[13. Reviewing the results of the test](#13-reviewing-the-results-of-the-test)
+[13. Reviewing the results of the test.](#13-reviewing-the-results-of-the-test)
 
 ## 1. Where are the questions stored?
 
@@ -153,7 +153,7 @@ Yes, a functionality has been implemented to enable users to upload new question
 As can be seen in above screenshot, the button “Subir pregunta” opens a pop-up window from which the user can select the new question that wants to upload to the server, together with the file of the image or audio associated with the question (if any), that must be stored in the “Multimedia” subdirectory. The question (and the multimedia file) is uploaded to the subject/topic folder that is selected in the drop-down list on the server at the moment of confirming the operation. Once the question has been uploaded, a chat is sent from the server to inform all the clients.
 
 
-## 9. Application GUI executing on different operating systems
+## 9. Application GUI executing on different operating systems.
 
 The following screenshots show the client application GUI executing on a Windows,  Linux, and Mac system:
 
@@ -177,7 +177,7 @@ The following screenshots show the client application GUI executing on a Windows
 
   ![MacOs GUI](screenshots/Chapter_9_image_5.png)
 
-## 10. Pausing and resuming a test execution
+## 10. Pausing and resuming a test execution.
 
 Any user who has not yet sent a response can pause the execution of the test in progress. As soon as the execution is paused, the countdown stops for the rest of the users as well. 
 
@@ -187,7 +187,7 @@ Any user can resume the execution of a test to send the answer to the question; 
 
 ![Resuming a test execution](screenshots/Resuming_a_test_execution.png)
 
-## 11. Stopping a test execution
+## 11. Stopping a test execution.
 
 In the same way, any user who has not yet sent a response can stop the execution of the test in progress. 
 
@@ -197,13 +197,13 @@ At the moment the user confirms the operation, the system penalizes the user who
  
  ![Test execution stopped with negative points](screenshots/Test_execution_stopped_with_negative_points.png)
 
-## 12. Extending the time limit to answer a question
+## 12. Extending the time limit to answer a question.
 
 A user can extend the time limit for answering a question by first selecting the number of seconds to be added and then clicking the “Ampliar” button. Similarly to de "Pause" option, the requested extension applies to all users, so this option increases everyone's chances.
 
 ![Extending the time limit to answer a question](screenshots/Extending_the_time_limit_to_answer_a_question.png)
 
-## 13. Reviewing the results of the test
+## 13. Reviewing the results of the test.
 
 Once the test execution has been completed, users can review the results through the **“Ver respuestas”** option. After selecting this option the buttons **"Anterior"** and **"Siguiente"** are enabled to move forwards or backwards through the list of the questions of the test and review the results.
 
