@@ -15,12 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with 'TestChallenge'. If not, see <https://www.gnu.org/licenses/>.
  */
-
 package com.testchallenge.server;
 
 import com.testchallenge.model.Configuracion;
 import com.testchallenge.model.TipoMensaje;
 import com.testchallenge.model.Mensaje;
+import com.testchallenge.model.Pregunta;
 import com.testchallenge.model.Ranking;
 import java.io.File;
 import java.io.IOException;
@@ -203,6 +203,16 @@ public class TestChallengeServer extends Thread {
                     logger.info(String.format("'%s': Thread de servicio para '%s' arrancado.",
                             TestChallengeServer.class.getSimpleName(), nickname));
 
+                    // Si hay un test en ejecución, enviarle la pregunta al usuario que se acaba de conectar
+                    if (testIniciado) {
+                        Pregunta preguntaEnviada = testServer.getPreguntaEnviada();
+                        logger.info(String.format("'%s': Enviando la pregunta al usuario '%s' recién conectado.",
+                            TestChallengeServer.class.getSimpleName(), nickname));
+                        // Envíar la pregunta al usuario
+                        testChallengeServerThread.getClientDataOut().writeObject(new Mensaje(preguntaEnviada));
+                        testChallengeServerThread.getClientDataOut().flush();
+                    }
+
                 } else {
                     // Se le informa al cliente que el nickname ya está en uso y que no se puede iniciar la sesión
                     out.writeObject(new Mensaje(TipoMensaje.NICKNAME_KO));
@@ -234,11 +244,11 @@ public class TestChallengeServer extends Thread {
     }
 
     /**
-     * Devuelve la lista de los objetos de tipo <code>TestChallengeServerThread</code> que gestionan las comunicaciones con cada
-     * uno de los clientes conectados al chat.
+     * Devuelve la lista de los objetos de tipo <code>TestChallengeServerThread</code> que gestionan las comunicaciones
+     * con cada uno de los clientes conectados al chat.
      *
-     * @return lista de objetos de tipo <code>TestChallengeServerThread</code> que gestionan las comunicaciones de cada uno de
-     * los clientes de clientes conectados al chat.
+     * @return lista de objetos de tipo <code>TestChallengeServerThread</code> que gestionan las comunicaciones de cada
+     * uno de los clientes de clientes conectados al chat.
      */
     public List<TestChallengeServerThread> getClientesConectados() {
         return clientesConectados;
@@ -247,13 +257,13 @@ public class TestChallengeServer extends Thread {
     /**
      * Devuelve el objeto de tipo <code>TestChallengeServerThread</code> que gestionan las comunicaciones con el cliente
      * cuyo nickname es el especificado como parámetro.
-     * 
+     *
      * @param nickname nickname del usuario conectado.
      * @return objeto de tipo <code>TestChallengeServerThread</code> que gestionan las comunicaciones con el cliente.
      */
     public TestChallengeServerThread getClienteConectado(String nickname) {
         TestChallengeServerThread cst = null;
-        
+
         int posicion = clientesConectados.indexOf(new TestChallengeServerThread(nickname));
         if (posicion != -1) {
             cst = clientesConectados.get(posicion);
@@ -432,11 +442,11 @@ public class TestChallengeServer extends Thread {
             cst.getClientDataSocket().close();
             logger.info(String.format("'%s': El usuario '%s' se ha desconectado.",
                     TestChallengeServer.class.getSimpleName(), cst.getNickname()));
-            
+
             // Si no quedan más usuarios conectados y hay un test en ejecución, detenerlo.
-            if (clientesConectados.isEmpty() && (isTestInProgress() || isTestPaused())){
+            if (clientesConectados.isEmpty() && (isTestInProgress() || isTestPaused())) {
                 testServer.stopTest();
-                
+
             }
         } catch (IOException ioe) {
             logger.severe(ioe.getMessage());

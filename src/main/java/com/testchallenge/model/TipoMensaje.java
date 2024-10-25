@@ -50,7 +50,7 @@ public enum TipoMensaje implements Serializable {
     // Mensaje en el que se envía el ranking actual al usuario que se acaba de conectar
     RANKING_ACTUAL("RANKING_ACTUAL"),
     // Mensaje utilizado por el cliente para preguntar al servidor si hay un test en ejecución
-    FLAG_TEST_EN_EJECUCION("HAY_UN_TEST_EN_EJECUCION"),
+    FLAG_TEST_EN_EJECUCION("FLAG_TEST_EN_EJECUCION"),
     // Mensaje enviado por el cliente para ampliar el tiempo de respuesta
     AMPLIAR_TIEMPO_RESPUESTA("AMPLIAR_TIEMPO_RESPUESTA"),
     // Pregunta contestada correctamente (la primera vez)

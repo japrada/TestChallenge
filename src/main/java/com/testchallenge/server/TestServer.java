@@ -837,4 +837,13 @@ public class TestServer extends Thread {
         // Envía una copia del ranking actualizado almacenado en el servidor
         return new Ranking(new HashMap<>(ranking));
     }
+    
+    /**
+     * Obtiene la pregunta enviada. 
+     * 
+     * @return pregunta enviada.
+     */
+    public Pregunta getPreguntaEnviada() {
+        return preguntaEnviada;
+    }
 }
