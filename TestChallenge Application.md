@@ -14,58 +14,67 @@ The application allows you to define five types of questions depending on the ty
 
     Example. The question definition:
 
-![Definition of a question of type "Unica"](screenshots/Question_definition_of_type_Unica.png)
+  ![Definition of a question of type "Unica"](screenshots/Question_definition_of_type_Unica.png)
+
     renders to:
 
-![Rendering of a question definition of type "Unica"](screenshots/Rendering_of_question_definition_of_type_Unica.png)
+  ![Rendering of a question definition of type "Unica"](screenshots/Rendering_of_question_definition_of_type_Unica.png)
 
 * **Múltiple**: several options are presented and the user can select more than one.
 
     Example. The question definition:
 
-![Definition of a question of type "Múltiple"](screenshots/Question_definition_of_type_Múltiple.png)
+  ![Definition of a question of type "Múltiple"](screenshots/Question_definition_of_type_Múltiple.png)
+
     renders to:
 
-![Rendering of a question definition of type "Múltiple"](screenshots/Rendering_of_question_definition_of_type_Múltiple.png)
+  ![Rendering of a question definition of type "Múltiple"](screenshots/Rendering_of_question_definition_of_type_Múltiple.png)
 
 * **Texto**: the user has to write a sentence with the answer to be sent.
 
     Example. The question definition:
 
-![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Texto.png)
+  ![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Texto.png)
+
     renders to:
 
-![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Texto.png)
+  ![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Texto.png)
 
 * **Emparejada**: several options are presented and for each option there is a drop-down list with the same list of values.
 
     Example 1. The question definition:
 
-![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Emparejada_1.png)
+  ![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Emparejada_1.png)
+   
    renders to:
 
-![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Emparejada_1.png)
+  ![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Emparejada_1.png)
+
     Example 2. The question definition that has associated an image:
 
-![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Emparejada_2.png)
+  ![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Emparejada_2.png)
+
     renders to:
 
-![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Emparejada_2.png)
+  ![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Emparejada_2.png)
 
 * **Multivalor**: several options are presented and for each option there is a drop-down list with values that can be different for each option.
 
     Example 1. The question definition that has associated an mp3 audio:
 
-![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Multivalor_1.png)
+  ![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Multivalor_1.png)
+
     renders to:
 
-![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Multivalor_1.png)
+  ![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Multivalor_1.png)
+
     Example 2. The question definition:
 
-![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Multivalor_2.png)
+  ![Definition of a question of type "Texto"](screenshots/Question_definition_of_type_Multivalor_2.png)
+
     renders to:
 
-![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Multivalor_2.png)
+  ![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Multivalor_2.png)
 
 ### 3. Is it possible to display questions containing images?
 
@@ -120,66 +129,83 @@ As can be seen in above screenshot, the button “Subir pregunta” opens a pop-
 
 The following screenshots show the client application GUI executing on a Windows,  Linux, and Mac system:
 
-1. User ‘windows’ connected from a Windows system participating in a test challenge of one question:
+* User 'windows' connected from a Windows system participating in a test challenge of one question:
 
-![Windows GUI](screenshots/Chapter_9_image_1.png)
+  ![Windows GUI](screenshots/Chapter_9_image_1.png)
 
-2. User ‘linux’ connected from a Linux system participating in the same test challenge as user ‘windows’:
+* User 'linux' connected from a Linux system participating in the same test challenge as user ‘windows’:
 
-![Linux GUI](screenshots/Chapter_9_image_2.png)
+  ![Linux GUI](screenshots/Chapter_9_image_2.png)
 
-3. User ‘windows’ connected from a Windows system being informed of the number of points obtained once the test challenge has finished:
+* User 'windows' connected from a Windows system being informed of the number of points obtained once the test challenge has finished:
 
-![Windows GUI with points](screenshots/Chapter_9_image_3.png)
+  ![Windows GUI with points](screenshots/Chapter_9_image_3.png)
 
-4. User connected from a Linux system being informed of the number of points obtained once the test challenge has finished:
+* User connected from a Linux system being informed of the number of points obtained once the test challenge has finished:
 
-![Linux GUI with points](screenshots/Chapter_9_image_4.png)
+  ![Linux GUI with points](screenshots/Chapter_9_image_4.png)
 
-5. Client application GUI running on a Mac OS system:
+* Client application GUI running on a Mac OS system:
 
-![MacOs GUI](screenshots/Chapter_9_image_5.png)
+  ![MacOs GUI](screenshots/Chapter_9_image_5.png)
 
 ### 10. Pausing and resuming a test execution
 
 Any user who has not yet sent a response can pause the execution of the test in progress. As soon as the execution is paused, the countdown stops for the rest of the users as well. 
 
-![Pausing a test execution](screenshots/Pause_test_execution.png)
+![Pausing a test execution](screenshots/Pausing_a_test_execution.png)
 
 Any user can resume the execution of a test to send the answer to the question; at that moment, the countdown is reactivated also for the rest of the users.
 
-[**Image to be added**]
+![Resuming a test execution](screenshots/Resuming_a_test_execution.png)
 
 ### 11. Stopping a test execution
 
 In the same way, any user who has not yet sent a response can stop the execution of the test in progress. 
 
-![Stopping a test execution](screenshots/Stop_test_execution.png)
+![Stopping a test execution](screenshots/Stopping_a_test_execution.png)
 
 At the moment the user confirms the operation, the system penalizes the user who has made the request with as many negative points as questions were still pending to be sent, plus an additional negative point for not having sent the answer to the question in progress. In addition, all users who had not sent the answer at the time of stopping the test are also assigned a negative point.
  
  ![Test execution stopped with negative points](screenshots/Test_execution_stopped_with_negative_points.png)
-[**Image to be added: Resume**]
 
 ### 12. Extending the time limit to answer a question
 
 A user can extend the time limit for answering a question by first selecting the number of seconds to be added and then clicking the “Ampliar” button. Similarly to de "Pause" option, the requested extension applies to all users, so this option increases everyone's chances.
 
-![Extending the time limit](screenshots/Extend_time_execution.png)
+![Extending the time limit to answer a question](screenshots/Extending_the_time_limit_to_answer_a_question.png)
 
 ### 13. Reviewing the results of the test
 
 Once the test execution has been completed, users can review the results through the **“Ver respuestas”** option. After selecting this option the buttons **"Anterior"** and **"Siguiente"** are enabled to move forwards or backwards through the list of the questions of the test and review the results.
 
- For each question sent by the server, the options answered correctly are shown in green and those answered incorrectly are shown in red. In the cases where the user has not submitted an answer, the question is shown with the correct options, but without color coding. In the following screenshots it can be seen different examples.
+ For each question sent by the server, the options answered correctly are shown in green and those answered incorrectly are shown in red. In the cases where the user has not submitted an answer, the question is shown with the correct options, but without color coding. 
+ 
+ In the following screenshots different examples are presented.
 
-![Review of the questions with correct and incorrect answers on a Mac system](screenshots/Results_review_question_with_correct_and_incorrect_answers_Mac.png)
+* Example 1 (screenshot taken from a Windows system): 
 
-![Review of the questions with correct and incorrect answers on a Windows system](screenshots/Results_Review_question_with_correct_and_incorrect_answers_Windows.png)
+  In this example, a question of type “Múltiple” has been answered. The correct options that the user should have selected when sending the answer were the third and the fourth options, but the user sent the answer only with the first option selected (and it is marked in red because it is not one of the correct answers).
 
-![Review of the questions with correct and incorrect answers on a Mac system](screenshots/Results_review_question_with_incorrect_answers_Windows.png)
+  ![Example 1](screenshots/Reviewing_the_results_example_1.png)
 
-![Review of the questions with an incorrect answer on a Windows system](screenshots/Results_review_question_with_an_incorrect_answer_Windows.png)
+* Example 2 (screenshot taken from a Windows system):
+
+  In this example, a question of type “Emparejada” has been answered. In this case, all the options are marked in red because none of them has been answered correctly. The correct answer is presented in green in the drop-down list associated with each option and the wrong answer (the one that the user erroneously selected), in red.
+
+  ![Example 2](screenshots/Reviewing_the_results_example_2.png)
+
+* Example 3 (screenshot taken from a Mac system): 
+
+  This is the same question as presented in the example 2, but in this case it can be seen that the user answered correctly the first option and incorrectly the fourth one; in the rest of the options, the default value “-” was sent, i.e the user didn’t select a specific value for the option before sending the answer in that case.
+
+  ![Example 3](screenshots/Reviewing_the_results_example_3.png)
+
+* Example 4 (screenshot taken from a Windows system): 
+
+  In this example, which is also a question of type “Emparejada”,  the user has answered correctly to all of the options and that’s why they are marked in green. 
+
+  ![Example 4](screenshots/Reviewing_the_results_example_4.png)
 
 
 
