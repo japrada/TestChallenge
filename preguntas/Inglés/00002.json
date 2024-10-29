@@ -5,11 +5,11 @@
 	"nivel":"Normal",
 	"tipo":"Unica",
 	"opciones": [
-		 "Picasso’s paintings are in museums.",
-		 "Picasso paintings are in museums.",
-		 "Picassos’s paintings are in museums."
+		"Picasso’s paintings are in museums.",
+		"Picasso paintings are in museums.",
+		"Picassos’s paintings are in museums."
 	],
 	"respuestas": [
-		 "Picasso’s paintings are in museums."
+		"Picasso’s paintings are in museums."
 	]
 }
