@@ -333,6 +333,7 @@ public class TestServer extends Thread {
         // NOTA: además, no se debe notificar al que ha enviado el mensaje (nickname)
         if (!isPaused) {
             isPaused = Boolean.TRUE;
+            testChallengeServer.pauseTest();
             // Notificar a los clientes conectados que TODAVÍA NO HAN enviado la respuesta para ajustar la UI
             enviarPauseResume(new Mensaje(TipoMensaje.TEST_PAUSADO), nickname);
         }
@@ -357,6 +358,15 @@ public class TestServer extends Thread {
     }
 
     /**
+     * Incializa la puntuación de la pregunta en curso de un usuario incorporado a un test iniciado.
+     * 
+     * @param nickname nickname del usuario incorporado a un test iniciado.
+     */
+    public synchronized void inicializarPuntuacionConTestIniciado(String nickname) {
+        puntuaciones.put(nickname, Puntuacion.NO_CONTESTADA);
+    }
+
+    /**
      * Resume la ejecución del test a solicitud de un usuario.
      *
      * @param nickname nickname del usuario que solicita pausar el test
@@ -365,6 +375,7 @@ public class TestServer extends Thread {
         logger.info(String.format("Reanudación del test solicitada por '%s'", nickname));
         if (isPaused) {
             isPaused = Boolean.FALSE;
+            testChallengeServer.resumeTest();
             // @TODO: Notificar a los clientes conectados que TODAVÍA NO HAN enviado la respuesta para ajustar la UI
             enviarPauseResume(new Mensaje(TipoMensaje.TEST_REANUDADO), nickname);
         }
@@ -463,21 +474,20 @@ public class TestServer extends Thread {
                             concat(SUBDIRECTORIO_MULTIMEDIA).concat("/").
                             concat(pregunta.getFicheroMultimedia());
 
+            // Leemos el fichero como un array de bytes
+            File multimediaFile = new File(ficheroMultimediaConRutaCompleta);
+            fis = new FileInputStream(multimediaFile);
+            byte[] byteArray = fis.readAllBytes();
+            
+            // Si el el archivo multimedia es un .mp3, obtenemos la duración en segundos
             if (pregunta.isFicheroMultimediaUnAudio()) {
-                // Si el el archivo multimedia es un .mp3, obtenemos la duración en segundos
-                File mp3File = new File(ficheroMultimediaConRutaCompleta);
-                AudioFile audioFile = AudioFileIO.read(mp3File);
+                AudioFile audioFile = AudioFileIO.read(multimediaFile);
                 long secondsLength = audioFile.getAudioHeader().getTrackLength();
                 pregunta.setDuracionDelAudioEnSegundos(secondsLength);
             }
 
-            // Leemos el fichero como un array de bytes
-            File file = new File(ficheroMultimediaConRutaCompleta);
-            fis = new FileInputStream(file);
-            byte[] bytes = new byte[(int) file.length()];
-            fis.read(bytes);
             // Le pasamos el array de bytes a la pregunta, para que se envíe al cliente
-            pregunta.setFicheroMultimediaData(bytes);
+            pregunta.setFicheroMultimediaData(byteArray);
             pregunta.setFicheroMultimedia(ficheroMultimediaConRutaCompleta);
         } catch (IOException
                 | CannotReadException
@@ -587,10 +597,11 @@ public class TestServer extends Thread {
             Integer penalizacion = (preguntasSeleccionadas.size() - i + 1);
             actualizarResultados(penalizacion, nickname);
 
+            // Se suma un punto adicional a la penalización por no haber enviado la respuesta
             enviarMensaje(new Mensaje(
                     String.format(
                             "\n[•] El usuario '%s' ha sido penalizado con '%d' puntos por cancelar el test.",
-                            nickname, penalizacion)));
+                            nickname, penalizacion + 1)));
         }
 
     }
@@ -790,10 +801,10 @@ public class TestServer extends Thread {
 
     /**
      * Método helper para actualizar los resultados teniendo en cuenta la penalización.
-     * 
-     * Además, a todos los que no hayan enviado la respuesta cuando se detiene el test se le restará 
-     * un punto y, adicionalmente, al usuario que ha detenido el test, también, por respuesta no enviada.
-     * 
+     *
+     * Además, a todos los que no hayan enviado la respuesta cuando se detiene el test se le restará un punto y,
+     * adicionalmente, al usuario que ha detenido el test, también, por respuesta no enviada.
+     *
      * @param penalizacion número de preguntas no contestadas (nº preguntas totales - nº pregunta actual + 1)
      * @param nickname nickname del usuario que ha detenido el test y al que se le aplica la penalización
      */
@@ -837,10 +848,10 @@ public class TestServer extends Thread {
         // Envía una copia del ranking actualizado almacenado en el servidor
         return new Ranking(new HashMap<>(ranking));
     }
-    
+
     /**
-     * Obtiene la pregunta enviada. 
-     * 
+     * Obtiene la pregunta enviada.
+     *
      * @return pregunta enviada.
      */
     public Pregunta getPreguntaEnviada() {

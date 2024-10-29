@@ -548,6 +548,7 @@ public class PreguntasPanel extends ConectablePanel {
         // Inhabilitar el botón de "Enviar respuesta" y el panel de "Ampliar segundos"
         setEnviarRespuestaButtonEnabled(false);
         setAmpliarSegundosPanelEnabled(false);
+        setPauseResumeButtonEnabled(true);
     }
 
     /**
@@ -564,6 +565,7 @@ public class PreguntasPanel extends ConectablePanel {
         // Inhabilitar el botón de "Enviar respuesta" y el panel de "Ampliar segundos"
         setEnviarRespuestaButtonEnabled(true);
         setAmpliarSegundosPanelEnabled(true);
+        setPauseResumeButtonEnabled(true);
     }
 
     /**
