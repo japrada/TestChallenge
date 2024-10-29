@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with 'TestChallenge'. If not, see <https://www.gnu.org/licenses/>.
  */
-
 package com.testchallenge.client.gui;
 
 import com.testchallenge.client.TestChallengeClientThread;
@@ -107,24 +106,40 @@ public class TestChallengeClient extends JFrame {
 
                 chatPanel.addMessage(sb.toString());
 
-                // Recibir las temáticas (obtenidas a partir de la lista de subdirectorios del directorio base)
+                // TEMÁTICAS: Recibir las temáticas (obtenidas a partir de la lista de subdirectorios del directorio base)
                 Mensaje tematicasMensaje = (Mensaje) in.readObject();
                 String[] tematicas = tematicasMensaje.getTextArray();
                 testPanel.getConfiguracionPanel().setTematicas(tematicas);
 
-                // Recuperar el ranking actual
+                // RANKING: Recuperar el ranking actual
                 Mensaje rankingActualMensaje = (Mensaje) in.readObject();
                 Ranking rankingActual = rankingActualMensaje.getRanking();
-                            testPanel.setRanking(rankingActual, nickname);
+                testPanel.setRanking(rankingActual, nickname);
 
-                // Recuperar el flag que indica si hay un test en ejecución
+                // FLAG TEST EN EJECUCIÓN: Recuperar el flag que indica si hay un test en ejecución
                 Mensaje testEnEjecucionMensaje = (Mensaje) in.readObject();
-                Boolean flag = testEnEjecucionMensaje.getFlag();
-                            if (flag.equals(Boolean.TRUE)) {
-                                testPanel.resetPanelPreguntas();
-                                chatPanel.addMessage("\n[•] Hay un test en ejecución!");
-                            }
-                
+                if (testEnEjecucionMensaje.getFlag().equals(Boolean.TRUE)) {
+                    testPanel.resetPanelPreguntas();
+                    chatPanel.addMessage("\n[•] Hay un test en ejecución!");
+                    // Recibir la pregunta y presentarla en la UI
+                    Mensaje preguntaEnviada = (Mensaje) in.readObject();
+                    testPanel.setPregunta(preguntaEnviada.getPregunta());
+                }
+
+                //FLAG TEST_PAUSADO: Recuperar el flag que indica si el test en ejecución está pausado
+                Mensaje testPausadoMensaje = (Mensaje) in.readObject();
+                if (testPausadoMensaje.getFlag().equals(Boolean.TRUE)) {
+                    chatPanel.addMessage("\n[•] El test, además, está pausado!");
+                    // Si el test está pausado, hay que mostrar el botón de play activado
+                    // Deshabilitar el panel de configuración y el botón Iniciar Test
+                    testPanel.getConfiguracionPanel().setEnabled(false);
+                    testPanel.getIniciarTestButton().setEnabled(false);
+                    testPanel.setModoRevisionEnabled(false);
+                    testPanel.getPreguntasPanel().setAmpliarSegundosPanelEnabled(false);
+                    testPanel.getPreguntasPanel().setStopButtonEnabled(true);
+                    testPanel.getPreguntasPanel().setResumeButtonEnabled();
+                }
+
                 // Arrancar el hilo de servicio
                 startClientThread(nickname);
 
@@ -272,8 +287,9 @@ public class TestChallengeClient extends JFrame {
     }
 
     /**
-     * Este método le permite al hilo de servicio <code>TestChallengeClientThread</code> creado por <code>TestChallengeClient</code>
-     * finalizar la ejecución del cliente en el caso que el hijo detecte que el servidor ya no está disponible.
+     * Este método le permite al hilo de servicio <code>TestChallengeClientThread</code> creado por
+     * <code>TestChallengeClient</code> finalizar la ejecución del cliente en el caso que el hijo detecte que el
+     * servidor ya no está disponible.
      */
     public void terminar() {
         try {

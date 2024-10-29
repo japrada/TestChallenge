@@ -163,7 +163,7 @@ public class TestChallengeServer extends Thread {
                     out.writeObject(new Mensaje(nicknamesConectados));
                     out.flush();
 
-                    // 5º.- Indicar al cliente las temáticas disponibles (carpetas en el directorio base)
+                    // 5º.- TEMÁTICAS: Indicar al cliente las temáticas disponibles (carpetas en el directorio base)
                     String[] tematicas = getTematicas();
                     out.writeObject(new Mensaje(tematicas));
                     out.flush();
@@ -183,35 +183,42 @@ public class TestChallengeServer extends Thread {
                     // 7º.- Añadir el cliente a la listas de clientes conectados
                     registrarConexion(testChallengeServerThread);
 
-                    // 8º.- Enviar el ranking actual al nuevo cliente
+                    // 8º.- RANKING: Enviar el ranking actual al nuevo cliente
+                    logger.info(String.format("'%s': Enviando el ranking actual a '%s'.",
+                            TestChallengeServer.class.getSimpleName(), nickname));
                     out.writeObject(new Mensaje(new Ranking(ranking), TipoMensaje.RANKING_ACTUAL));
                     out.flush();
 
-                    logger.info(String.format("'%s': Enviando el ranking actual a '%s'.",
-                            TestChallengeServer.class.getSimpleName(), nickname));
-
-                    // 9º.- Enviar el flag de test iniciado al nuevo cliente
-                    out.writeObject(new Mensaje(testIniciado, TipoMensaje.FLAG_TEST_EN_EJECUCION));
-                    out.flush();
-
+                    // 9º.- FLAG TEST EN EJECUCION: Enviar el flag de test iniciado al nuevo cliente
                     logger.info(String.format("'%s': Enviando el flag que indica si hay un test en ejecución a '%s'.",
                             TestChallengeServer.class.getSimpleName(), nickname));
+                    out.writeObject(new Mensaje(testIniciado, TipoMensaje.TEST_EN_EJECUCION));
+                    out.flush();
 
-                    // 10º.- Arrancar el hilo de servicio para el nuevo cliente de chat                  
+                     // Si hay un test en ejecución, se le envía al usuario la pregunta enviada
+                    if (testIniciado) {
+                        Pregunta preguntaEnviada = testServer.getPreguntaEnviada();
+                        logger.info(String.format("'%s': Enviando la pregunta al usuario '%s' recién conectado.",
+                                TestChallengeServer.class.getSimpleName(), nickname));
+                        // Envíar la pregunta al usuario
+                        out.writeObject(new Mensaje(preguntaEnviada, TipoMensaje.TEST_PREGUNTA));
+                        out.flush();
+                        
+                        // Incializar la puntuación del usuario para la pregunta enviada cuando se incorpora a un test iniciado
+                        testServer.inicializarPuntuacionConTestIniciado(nickname);
+                    }
+                    
+                    // 10º.- FLAG TEST PAUSADO: Enviar el flag de test pausado al nuevo cliente
+                    logger.info(String.format("'%s': Enviando el flag que indica si el test está pausado a '%s'.",
+                            TestChallengeServer.class.getSimpleName(), nickname));
+                    out.writeObject(new Mensaje(testPausado, TipoMensaje.TEST_PAUSADO));
+                    out.flush();
+
+                    // 11º.- Arrancar el hilo de servicio para el nuevo cliente de chat                  
                     testChallengeServerThread.start();
 
                     logger.info(String.format("'%s': Thread de servicio para '%s' arrancado.",
                             TestChallengeServer.class.getSimpleName(), nickname));
-
-                    // Si hay un test en ejecución, enviarle la pregunta al usuario que se acaba de conectar
-                    if (testIniciado) {
-                        Pregunta preguntaEnviada = testServer.getPreguntaEnviada();
-                        logger.info(String.format("'%s': Enviando la pregunta al usuario '%s' recién conectado.",
-                            TestChallengeServer.class.getSimpleName(), nickname));
-                        // Envíar la pregunta al usuario
-                        testChallengeServerThread.getClientDataOut().writeObject(new Mensaje(preguntaEnviada));
-                        testChallengeServerThread.getClientDataOut().flush();
-                    }
 
                 } else {
                     // Se le informa al cliente que el nickname ya está en uso y que no se puede iniciar la sesión
@@ -436,8 +443,12 @@ public class TestChallengeServer extends Thread {
         try {
             // Deregistramos el usuario
             clientesConectados.remove(cst);
-            // y le quitamos los puntos.
-            ranking.remove(cst.getNickname());
+
+            // ***********
+            // NOTA: no le quitamos los puntos porque tendríamos que actualizar el ranking de todos los usuarios conectados
+            // Darle una vuelta por si vemos que tiene sentido hacer esta operación
+            //ranking.remove(cst.getNickname());
+            // ***********
             // Finalmente, cerramos la conexión.
             cst.getClientDataSocket().close();
             logger.info(String.format("'%s': El usuario '%s' se ha desconectado.",

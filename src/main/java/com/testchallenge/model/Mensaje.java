@@ -115,8 +115,6 @@ public class Mensaje implements Serializable {
             this.tipo = TipoMensaje.RANKING_ACTUAL;
         } else if (isConfiguracion(object)) {
             this.tipo = TipoMensaje.INICIAR_TEST;
-        } else if (isFlag(object)) {
-            this.tipo = TipoMensaje.FLAG_TEST_EN_EJECUCION;
         } else {
             this.tipo = TipoMensaje.UNKNOWN;
         }

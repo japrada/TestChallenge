@@ -189,7 +189,7 @@ public class TestPanel extends ConectablePanel {
             preguntas = new ArrayList<>();
             preguntasPanel.setPreguntas(preguntas);
         }
-
+        
         preguntasPanel.setBotonRevisarEnabled(isEnabled);
         preguntasPanel.setPauseResumeButtonEnabled(false);
         preguntasPanel.setStopButtonEnabled(false);
