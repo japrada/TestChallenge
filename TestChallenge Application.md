@@ -1,32 +1,59 @@
 ## Table of Contents
+- [Table of Contents](#table-of-contents)
+- [1. Chatting and lunching a test](#1-chatting-and-lunching-a-test)
+  - [1.1 Chatting](#11-chatting)
+  - [1.2 Launching a test challenge](#12-launching-a-test-challenge)
+- [2. Where are the questions stored?](#2-where-are-the-questions-stored)
+- [3. What types of questions can be defined?](#3-what-types-of-questions-can-be-defined)
+- [4. Is it possible to display questions containing images?](#4-is-it-possible-to-display-questions-containing-images)
+- [5. Is it possible to display questions containing audios?](#5-is-it-possible-to-display-questions-containing-audios)
+- [6. Is the order of the options shown in the questions always the same?](#6-is-the-order-of-the-options-shown-in-the-questions-always-the-same)
+- [7. Is authentication required to log into the application?](#7-is-authentication-required-to-log-into-the-application)
+- [8. Is authentication required to log into the application?](#8-is-authentication-required-to-log-into-the-application)
+- [9. Is it possible to upload new questions to the server?](#9-is-it-possible-to-upload-new-questions-to-the-server)
+- [10. Application GUI executing on different operating systems](#10-application-gui-executing-on-different-operating-systems)
+- [11. Pausing and resuming a test execution](#11-pausing-and-resuming-a-test-execution)
+- [12. Stopping a test execution](#12-stopping-a-test-execution)
+- [13. Extending the time limit to answer a question](#13-extending-the-time-limit-to-answer-a-question)
+- [14. Reviewing the results of the test](#14-reviewing-the-results-of-the-test)
 
-[1. Where are the questions stored?](#1-where-are-the-questions-stored)
+## 1. Chatting and lunching a test
 
-[2. What types of questions can be defined?](#2-what-types-of-questions-can-be-defined)
+The two main functionalities provided by the application are the sending of text messages (chats) and the execution of group tests. 
 
-[3. Is it possible to display questions containing images?](#3-is-it-possible-to-display-questions-containing-images)
+### 1.1 Chatting
 
-[4. Is it possible to display questions containing audios?](#4-is-it-possible-to-display-questions-containing-audios)
+Text messages are sent and received in the "Chat" panel, as it is shown in the following screenshot:
 
-[5. Is the order of the options shown in the questions always the same?](#5-is-the-order-of-the-options-shown-in-the-questions-always-the-same)
+![Chatting](screenshots/Chat_panel.png)
 
-[6. Is authentication required to log into the application?](#6-is-authentication-required-to-log-into-the-application)
+As can be seen in the picture above, the area at the bottom of the "Chat" panel is where the user writes the test messages. The text message is sent to all of the users by clicking on the "Enviar chat" button. In the case the text message contains a specific user (or a group of users) (i.e a @<username> reference), it will be sent only to the referenced users. 
 
-[7. Is authentication required to log into the application?](#7-is-authentication-required-to-log-into-the-application)
+Sent messages are received by the users on the top area of the "Chat" panel. However, this text area is not only used by the application to show the messages interchanged by the users at any moment, but also to show the messages that are sent from the server during a test execution. 
 
-[8. Is it possible to upload new questions to the server?](#8-is-it-possible-to-upload-new-questions-to-the-server)
+### 1.2 Launching a test challenge
 
-[9. Application GUI executing on different operating systems.](#9-application-gui-executing-on-different-operating-systems)
+The following screenshot shows the sequence of steps to follow to configure the options with which the test will be launched to the group of connected users. 
 
-[10. Pausing and resuming a test execution.](#10-pausing-and-resuming-a-test-execution)
+  ![Setting up a test execution](screenshots/Steps_to_set_up_a_test_execution.png)
 
-[11. Stopping a test execution.](#11-stopping-a-test-execution)
+  1. **"Temática"**: this drop-down list contains the name of the subdirectories that are under the root base directory parameter that has been set when starting the TestChallengeServer application. These directories are the topics or areas of knowledge containing the questions of the tests that are to be lunched.
+   
+  2. **"Nivel"**: this drop-down list contains the level of the questions to be selected within the topic or knowledge area that has been previously selected.
+   
+  3. **"Tipo"**: this drop-down list contains the type of questions that will be included in the test. It is possible to select one or more type of questions as this component enables the selection of multiple values.
 
-[12. Extending the time limit to answer a question.](#12-extending-the-time-limit-to-answer-a-question)
+  4. **"Nº Preguntas"**: in this field you set the number of questions of the test. If the number of questions set is greater than the number of questions that are actually stored in the selected directory, only the smaller of the two will be sent.
+   
+  5. **"Tpo. Límite"**: in this field you set the number of seconds that any of the users have to answer the question. This time limit can be modified during the test execution for the question that has been sent by adding more seconds though the "Ampliar tiempo en" option.
+   
+  6. **"Iniciar test"**: finally, once all the previous options have been set, the user starts the test by clicking on the "Iniciar test" button and the server notifies the users that a test has been launched with the selected configuration:
 
-[13. Reviewing the results of the test.](#13-reviewing-the-results-of-the-test)
+     ![Test execution about to start](screenshots/Test_execution_launched_and_about_to_start.png)
 
-## 1. Where are the questions stored?
+
+
+## 2. Where are the questions stored?
 
 The questions (JSON files) are stored in the server's file system, in one of the subdirectories of the base/root directory that is specified in the corresponding server startup parameter. Each subdirectory represents a subject/topic and its name is displayed in the client application on a drop-down list.
 
@@ -34,7 +61,7 @@ The **“Multimedia”** subfolder stores the images and audio files that are as
 
 ![Questions for the topic "Inglés"](screenshots/Directorio_preguntas.png)
 
-## 2. What types of questions can be defined?
+## 3. What types of questions can be defined?
 
 The application allows you to define five types of questions depending on the type of the answer:
 
@@ -104,7 +131,7 @@ The application allows you to define five types of questions depending on the ty
 
   ![Rendering of a question definition of type "Texto"](screenshots/Rendering_of_question_definition_of_type_Multivalor_2.png)
 
-## 3. Is it possible to display questions containing images?
+## 4. Is it possible to display questions containing images?
 
 Yes, the image is displayed in the upper right corner of the panel containing the question. That is, in this version of the application a single image can be associated with a question, but not with each of the options of the question. 
 
@@ -114,7 +141,7 @@ The image (.gif, .png, .jpg, .jpeg) can be zoomed in by double-clicking on it an
 
 ![Pop up window showing the associated image](screenshots/Chapter_3_image_2.png)
 
-## 4. Is it possible to display questions containing audios?
+## 5. Is it possible to display questions containing audios?
 
 Yes, when a question has an mp3 audio file associated with it, it can be played by double-clicking on the “Mp3” icon that appears in the upper right corner of the panel displaying the question. 
 
@@ -124,7 +151,7 @@ In this version only .mp3 file playback has been implemented. You can pause it o
 
 ![Pop up window showing the associated audio](screenshots/Chapter_4_image_2.png)
 
-## 5. Is the order of the options shown in the questions always the same?
+## 6. Is the order of the options shown in the questions always the same?
 
 No, by default when a question is sent to the connected users by the test server the options it contains are randomly reordered so that the order in which they are presented may change from one test execution to another. This is done to make it more difficult to memorize the answers. 
 
@@ -132,19 +159,19 @@ This behavior can be modified by including the optional field “desordenar_opci
 
 ![Question with "desordenar_opciones" set to "false"](screenshots/Chapter_5_image_1.png)
 
-## 6. Is authentication required to log into the application?
+## 7. Is authentication required to log into the application?
 
 No, the application doesn’t manage users and password credentials, and it is not integrated with an IdP (Identity Provider) or another authentication system. Users log into the application using an alias/nickname that must be unique among the group of users that are connected to the same server.
 
 ![User registration window dialog](screenshots/Chapter_6_image_1.png)
 
-## 7. Is authentication required to log into the application?
+## 8. Is authentication required to log into the application?
 
 If you log into the application with a username’s nickname/alias that is already registered, you’ll get this error message:
 
 ![User registration window dialog: duplicated nickname](screenshots/Chapter_7_image_1.png)
 
-## 8. Is it possible to upload new questions to the server?
+## 9. Is it possible to upload new questions to the server?
 
 Yes, a functionality has been implemented to enable users to upload new questions to the server together with the multimedia file (image or audio) that is specified in the JSON definition file.
 
@@ -152,8 +179,7 @@ Yes, a functionality has been implemented to enable users to upload new question
 
 As can be seen in above screenshot, the button “Subir pregunta” opens a pop-up window from which the user can select the new question that wants to upload to the server, together with the file of the image or audio associated with the question (if any), that must be stored in the “Multimedia” subdirectory. The question (and the multimedia file) is uploaded to the subject/topic folder that is selected in the drop-down list on the server at the moment of confirming the operation. Once the question has been uploaded, a chat is sent from the server to inform all the clients.
 
-
-## 9. Application GUI executing on different operating systems.
+## 10. Application GUI executing on different operating systems
 
 The following screenshots show the client application GUI executing on a Windows,  Linux, and Mac system:
 
@@ -177,7 +203,7 @@ The following screenshots show the client application GUI executing on a Windows
 
   ![MacOs GUI](screenshots/Chapter_9_image_5.png)
 
-## 10. Pausing and resuming a test execution.
+## 11. Pausing and resuming a test execution
 
 Any user who has not yet sent a response can pause the execution of the test in progress. As soon as the execution is paused, the countdown stops for the rest of the users as well. 
 
@@ -187,7 +213,7 @@ Any user can resume the execution of a test to send the answer to the question; 
 
 ![Resuming a test execution](screenshots/Resuming_a_test_execution.png)
 
-## 11. Stopping a test execution.
+## 12. Stopping a test execution
 
 In the same way, any user who has not yet sent a response can stop the execution of the test in progress. 
 
@@ -197,13 +223,13 @@ At the moment the user confirms the operation, the system penalizes the user who
  
  ![Test execution stopped with negative points](screenshots/Test_execution_stopped_with_negative_points.png)
 
-## 12. Extending the time limit to answer a question.
+## 13. Extending the time limit to answer a question
 
 A user can extend the time limit for answering a question by first selecting the number of seconds to be added and then clicking the “Ampliar” button. Similarly to de "Pause" option, the requested extension applies to all users, so this option increases everyone's chances.
 
 ![Extending the time limit to answer a question](screenshots/Extending_the_time_limit_to_answer_a_question.png)
 
-## 13. Reviewing the results of the test.
+## 14. Reviewing the results of the test
 
 Once the test execution has been completed, users can review the results through the **“Ver respuestas”** option. After selecting this option the buttons **"Anterior"** and **"Siguiente"** are enabled to move forwards or backwards through the list of the questions of the test and review the results.
 
@@ -235,5 +261,8 @@ Once the test execution has been completed, users can review the results through
 
   ![Example 4](screenshots/Reviewing_the_results_example_4.png)
 
+* Example 5 (screenshot taken from a Mac system): 
 
+   In this example, a question of type "Emparejada" that has not been answered by the user (so a -1 point has been scored in this case) is showing the correct answers with no color scheme associated because the user didn't answer none of the options.
 
+  ![Example 5](screenshots/Question_not_sent_showing_the%20correct_answers.png)
