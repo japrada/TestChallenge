@@ -5,11 +5,11 @@
 	"nivel":"Normal",
 	"tipo":"Emparejada",
 	"opciones": [
-		 "Jill often wears jewelry. This necklace is ____ .",
-		 "Those are Peter’s sisters. ____ names are Emily and Jackie.",
-		 "Have you got a dictionary? Is this dictionary ____?",
-		 "This isn’t Harry’s notebook. The blue notebook is ____.",
-		 "My mother’s eyes aren’t blue. ____ eyes are brown."
+		"Jill often wears jewelry. This necklace is ____ .",
+		"Those are Peter’s sisters. ____ names are Emily and Jackie.",
+		"Have you got a dictionary? Is this dictionary ____?",
+		"This isn’t Harry’s notebook. The blue notebook is ____.",
+		"My mother’s eyes aren’t blue. ____ eyes are brown."
 	],
 	"valores_opciones": [
 		["hers","Their","yours","his","Her"]

@@ -3,11 +3,11 @@
 	"texto":"Escribe la siguiente frase en Inglés: 'Hicimos una barbacoa en el jardín para celebrar el 4 de Julio.'",
 	"tematica":"Inglés",
 	"nivel":"Normal",
-	tipo:"Texto",
+	"tipo":"Texto",
 	"opciones": [
 	],
 	"respuestas": [
-		 "We had a barbecue in the garden to celebrate 4th July.",
-		 "We had a barbecue in the garden to celebrate 4th July"
+		"We had a barbecue in the garden to celebrate 4th July.",
+		"We had a barbecue in the garden to celebrate 4th July"
 	]
 }

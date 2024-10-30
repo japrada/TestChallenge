@@ -5,21 +5,21 @@
 	"nivel":"Normal",
 	"tipo":"Multivalor",
 	"opciones": [
-		 "I met him ___ holidays.",
-		 "I don’t like working ____ night.",
-		 "I can work ____ the morning",
-		 "Did you have a good time ___ Christmas?",
-		 "I live ___ 13, Zazuar street.",
-		 "I may not be at home ___ the morning.",
-		 "Can you phone ___ the afternoon instead.",
-		 "Tom won a gold medal ___ the age of 21.",
-		 "Jack’s brother is an engineer but he is out of work ___ the moment.",
-		 "There are usually a lot of parties ___ New Year’s Eve.",
-		 "Tom see his parents usually only ___ Easter.",
-		 "He usually see his parents ___ the summer for a few days.",
-		 "Carol went to live to Paris ___ 17 and she came back when she was 25.",
-		 "The telephone and the doorbell rang ___ the same time.",
-		 "We live ___ the second floor."
+		"I met him ___ holidays.",
+		"I don’t like working ____ night.",
+		"I can work ____ the morning",
+		"Did you have a good time ___ Christmas?",
+		"I live ___ 13, Zazuar street.",
+		"I may not be at home ___ the morning.",
+		"Can you phone ___ the afternoon instead.",
+		"Tom won a gold medal ___ the age of 21.",
+		"Jack’s brother is an engineer but he is out of work ___ the moment.",
+		"There are usually a lot of parties ___ New Year’s Eve.",
+		"Tom see his parents usually only ___ Easter.",
+		"He usually see his parents ___ the summer for a few days.",
+		"Carol went to live to Paris ___ 17 and she came back when she was 25.",
+		"The telephone and the doorbell rang ___ the same time.",
+		"We live ___ the second floor."
 	],
 	"valores_opciones": [
 		["on","at","in","were"],
@@ -39,6 +39,6 @@
 		["on","at","in","were"]
 	],
 	"respuestas": [
-		 "on", "at", "in", "at", "at", "in", "in", "at", "at", "on", "at", "in", "at", "at", "on"
+		"on", "at", "in", "at", "at", "in", "in", "at", "at", "on", "at", "in", "at", "at", "on"
 	]
 }
