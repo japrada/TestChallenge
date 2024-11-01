@@ -1,0 +1,24 @@
+{
+	"id":14,
+	"texto":"(Duplicado) Answer to the questions after listening to the audio (https://listeningingles.com/career-search/).",
+	"tematica":"Inglés",
+	"nivel":"Alto",
+	"tipo":"Multivalor",
+	"fichero_multimedia":"Career Search.mp3",
+	"opciones": [
+		"1. What kind of career does the woman want to pursue?",
+		"2. Right know, the woman's boyfriend is ...",
+		"3. What does Ryan think about James' future career?",
+		"4. Ryan suggests that women are more suited for jobs in _____"
+	],
+	"valores_opciones": [
+		["sales associate","repairing vehicles", "major in mechanical engineering"],
+		["majoring in secondary education", "pursing a career in auto mechanics", "getting a degree in a medical field"],
+		["there is no money in that profession", "James isn't qualified for the job", "James is pursuing a job for women"],
+		["farming and housing cleaning","education and office work", "nursing and child care"]
+	],
+	"respuestas": [
+		"repairing vehicles", "getting a degree in a medical field", "James is pursuing a job for women", "education and office work"
+	],
+	"desordenar_opciones":"false"
+}

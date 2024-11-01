@@ -133,7 +133,7 @@ public class TestServer extends Thread {
 
         try {
             // Notificar a todos los clientes que se ha solicitado la ejecución de un test
-            enviarMensaje(new Mensaje(mensajeInicioTest()));
+            enviarMensaje(new Mensaje(getMensajeInicioTest()));
             // Notificar a todos los clientes que se está preparando el test
             enviarMensaje(new Mensaje("[•] Preparando el test ... "));
             // Cargar en memoria el banco de preguntas
@@ -192,7 +192,7 @@ public class TestServer extends Thread {
      *
      * @return mensaje que notifica a los clientes conectados que se va a realizar un test.
      */
-    private String mensajeInicioTest() {
+    public String getMensajeInicioTest() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
         StringBuilder sb = new StringBuilder();
@@ -266,8 +266,8 @@ public class TestServer extends Thread {
         if (todasLasRespuestasHanSidoEnviadas()) {
             interrumpirCuentaAtras = true;
             // Antes de lanzar la siguiente pregunta, actualizar la tabla de resultados con las puntuaciones obtenidas
-            logger.info("Todos los clientes han enviado su respuesta. Se pasa automáticamente a la siguiente pregunta.");
-            enviarMensaje(new Mensaje("Todos los clientes han enviado su respuesta. Se pasa automáticamente a la siguiente pregunta."));
+            logger.info("Todos los usuarios han enviado su respuesta. Se pasa automáticamente a la siguiente pregunta.");
+            enviarMensaje(new Mensaje("Todos los usuarios han enviado su respuesta. Se pasa automáticamente a la siguiente pregunta."));
         }
 
         // NOTA (2): esta implementación es para cuando sólo hay un cliente conectado y ha enviado la respuesta.
@@ -568,7 +568,7 @@ public class TestServer extends Thread {
                 }
 
                 // Informar del número de la pregunta del Test que se está ejecutando (útil para ver conteos por pregunta)
-                enviarMensaje(new Mensaje("[•] " + preguntaTitle));
+                enviarMensaje(new Mensaje("[•] ".concat(preguntaTitle)));
 
                 // Envíar la pregunta a todos los clientes conectados
                 enviarMensaje(new Mensaje(pregunta));
@@ -695,7 +695,7 @@ public class TestServer extends Thread {
      * @param mensaje mensaje a enviar a todos los clientes.
      * @throws IOException excepción al enviar el mensaje por el canal de escritura.
      */
-    void enviarMensaje(Mensaje mensaje) {
+    private void enviarMensaje(Mensaje mensaje) {
         // Enviar un mensaje a todos los clientes conectados
         List<TestChallengeServerThread> clientesConectados = testChallengeServer.getClientesConectados();
 

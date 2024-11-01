@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with 'TestChallenge'. If not, see <https://www.gnu.org/licenses/>.
  */
-
 package com.testchallenge.client.gui;
 
 import com.testchallenge.model.Configuracion;
@@ -181,15 +180,13 @@ public class TestPanel extends ConectablePanel {
      * @param isEnabled <code>true</code>, para activar el modo revisión y <code>false</code> para desactivarlo
      */
     public void setModoRevisionEnabled(boolean isEnabled) {
-        if (isEnabled && !preguntas.isEmpty()) {
-            preguntasPanel.setPreguntas(preguntas);
-            //preguntasPanel.setBotonRevisarEnabled(true);
-            preguntasPanel.setAmpliarSegundosPanelEnabled(false);
-        } else {
+        
+        if (!isEnabled) {
             preguntas = new ArrayList<>();
-            preguntasPanel.setPreguntas(preguntas);
         }
         
+        preguntasPanel.setPreguntas(preguntas);
+        preguntasPanel.setAmpliarSegundosPanelEnabled(false);
         preguntasPanel.setBotonRevisarEnabled(isEnabled);
         preguntasPanel.setPauseResumeButtonEnabled(false);
         preguntasPanel.setStopButtonEnabled(false);

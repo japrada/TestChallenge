@@ -1,7 +1,8 @@
-
-- [1. The Test Challenge Application.](#1-the-test-challenge-application)
-- [2. Description.](#2-description)
-- [3. FAQs.](#3-faqs)
+## Table of Contents
+- [Table of Contents](#table-of-contents)
+- [1. The Test Challenge Application](#1-the-test-challenge-application)
+- [2. Description](#2-description)
+- [3. FAQs](#3-faqs)
   - [3.1. Which use cases can this project cover?](#31-which-use-cases-can-this-project-cover)
   - [3.2. How does the application work at a high level?](#32-how-does-the-application-work-at-a-high-level)
   - [3.3. How are questions created?](#33-how-are-questions-created)
@@ -25,19 +26,20 @@
 - [4. Packaging and creation of the client and server .jars of the application](#4-packaging-and-creation-of-the-client-and-server-jars-of-the-application)
   - [4.1. Set the 'skipTests' property to 'true' in the 'pom.xml' file.](#41-set-the-skiptests-property-to-true-in-the-pomxml-file)
   - [4.2. Select the pom.xml file and in the context menu, the "Run Maven \>", "Goals ..." option.](#42-select-the-pomxml-file-and-in-the-context-menu-the-run-maven--goals--option)
-  - [4.3. Change the file extension of 'TestChallenge-1.0-jar-with-dependencies.jar' to .zip.](#43-change-the-file-extension-of-testchallenge-10-jar-with-dependenciesjar-to-zip)
-  - [4.4. Unzip the .zip file to create the 'TestChallenge-1.0-jar-with-dependencies' folder.](#44-unzip-the-zip-file-to-create-the-testchallenge-10-jar-with-dependencies-folder)
-  - [4.5. Create the .jar of the server and the client app.](#45-create-the-jar-of-the-server-and-the-client-app)
-    - [4.5.1. Server app.](#451-server-app)
-    - [4.5.2. Client app.](#452-client-app)
-- [5. Execution of the server and client applications.](#5-execution-of-the-server-and-client-applications)
-- [6. License.](#6-license)
+  - [4.3. Change the file extension of 'TestChallenge-1.0-jar-with-dependencies.jar' to .zip](#43-change-the-file-extension-of-testchallenge-10-jar-with-dependenciesjar-to-zip)
+  - [4.4. Unzip the .zip file to create the 'TestChallenge-1.0-jar-with-dependencies' folder](#44-unzip-the-zip-file-to-create-the-testchallenge-10-jar-with-dependencies-folder)
+  - [4.5. Create the .jar of the server and the client app](#45-create-the-jar-of-the-server-and-the-client-app)
+    - [4.5.1. Server app](#451-server-app)
+    - [4.5.2. Client app](#452-client-app)
+- [5. Execution of the server and client applications](#5-execution-of-the-server-and-client-applications)
+- [6. License](#6-license)
 
-## 1. The Test Challenge Application.
+
+## 1. The Test Challenge Application
 
 The application allows to evaluate the level of knowledge of a group of users (or a single user) on a subject/topic by performing tests that run simultaneously on all connected systems. Users accumulate points according to the correctness and speed with which they submit their answers within a time limit. During the execution of the test the system sends notifications of the partial results as users answer the questions. At the end of the test they can review the answers sent with their correction (incorrect answers are shown in red and  correct answers in green), the points obtained and their position in the ranking.
 
-## 2. Description.
+## 2. Description
 
 The project implements a client-server application to chat and perform group tests in a gamified way by selecting the subject/topic, the level of difficulty and the type of questions, the number of questions of the test, and the time limit to send the answers. On one hand, it consists of a Java server application that manages the communication between users, the messages interchanged between them and the server, and the execution of the tests. On the other hand, it is provided a Java Swing desktop client application with which users, after registering with an alias or nickname, can chat, launch test challenges to the group, review the answers sent and the results obtained according to their correctness.
 
@@ -45,7 +47,7 @@ Gamification is implemented by introducing a time limit for submitting the answe
 
 If a user considers they cannot send the answer within the established time limit, they can request either a time extension or pause the execution of the test. If a user extends the time limit of a question, it is also extended for the rest of the users; similarly, if a user requests to pause a test, it is also paused for the rest of the users, giving them more time to answer. In this version no policies have been implemented to penalize users when they request to extend the number of seconds or pause the test execution (maybe some one can change this :-)). The options to pause/resume a test will only be available to those users who have not submitted a response yet. Any user can stop the test at any given time, but  the user who requests that will receive as many negative points as questions are pending to be sent by the server.
 
-## 3. FAQs.
+## 3. FAQs
 
 ### 3.1. Which use cases can this project cover?
 
@@ -139,15 +141,15 @@ Initially, I had not considered publishing this application and as my native lan
 
 11. Five types of questions depending on the type of the answer:
 
-- Unica
+- **Unica**
 
-- Múltiple (Note: My apologies for the accent for non Spanish users)
+- **Múltiple** (Note: My apologies for the accent for non Spanish users)
 
-- Texto
+- **Texto**
 
-- Emparejada
+- **Emparejada**
 
-- Multivalor
+- **Multivalor**
 
 12. Change the order of the options before sending the question ("desordenar_opciones" field of the JSON definition file, optional, defaults to 'true')
 
@@ -249,22 +251,22 @@ We will type the Maven goal we want to run in the dialog box that appears (it ca
 
 - "package" does a "build" and then creates the .jar file of the project only in the target directory.
 
-### 4.3. Change the file extension of 'TestChallenge-1.0-jar-with-dependencies.jar' to .zip.
+### 4.3. Change the file extension of 'TestChallenge-1.0-jar-with-dependencies.jar' to .zip
 
-### 4.4. Unzip the .zip file to create the 'TestChallenge-1.0-jar-with-dependencies' folder.
+### 4.4. Unzip the .zip file to create the 'TestChallenge-1.0-jar-with-dependencies' folder
 
 The manifest file 'META-INF/MANIFEST.mf' includes the main class that is set in the maven-assembly-plugin configuration (see 'pom.xml' file) which can be either 'com.testchallenge.server.TestChallengeServer', for the server .jar, or 'com.testchallenge.client.gui.TestChallengeClient', for the client .jar.
 
-### 4.5. Create the .jar of the server and the client app.
+### 4.5. Create the .jar of the server and the client app
 
-#### 4.5.1. Server app.
+#### 4.5.1. Server app
 
 From the 'TestChallenge-1.0-jar-with-dependencies' folder created after unzipping the 'TestChallenge-1.0-jar-with-dependencies.zip' archive, execute the following command:
 
 ```
 jar -cfmv TestChallengeServer.jar META-INF/Manifest.mf org/apache/* org/jaudiotagger/* com/google/* com/testchallenge/server/* com/testchallenge/model/* images/* javazoom/*
 ```
-#### 4.5.2. Client app.
+#### 4.5.2. Client app
 
 From the  'TestChallenge-1.0-jar-with-dependencies' folder created after unzipping the 'TestChallenge-1.0-jar-with-dependencies.zip'  archive, execute the following command:
 
@@ -273,7 +275,7 @@ jar -cfmv TestChallengeClient.jar META-INF/Manifest.mf org/apache/* org/jaudiota
 ```
 IMPORTANT: in the 'META-INF/MANIFEST.mf' file you must put the corresponding main client or server class before executing the .jar creation. 
 
-## 5. Execution of the server and client applications.
+## 5. Execution of the server and client applications
 
 To start the server, from the directory that contains the server .jar execute the following command:
 
@@ -297,6 +299,6 @@ java -jar TestChallengeClient.jar [<nick_name>] [<server_IP_or_server_DNS_name>]
 
 As indicated by '[ ]', these parameters are optional: if you set them from the command line, they will be filled out automatically in the corresponding fields of the registration window that is shown before the GUI of the application is started. In the case they are not set before, you can set them in the registration window.
 
-## 6. License.
+## 6. License
 
 This project is licensed under the terms of the [GNU General Public License version 3 (GPLv3)](https://www.gnu.org/licenses/gpl-3.0.html). See the LICENSE.txt file for more details.

@@ -180,41 +180,54 @@ public class TestChallengeServer extends Thread {
                     // al hilo hijo acceder a los métodos del padre para realizar determinadas operaciones. 
                     testChallengeServerThread.setTestChallengeServer(this);
 
-                    // 7º.- Añadir el cliente a la listas de clientes conectados
-                    registrarConexion(testChallengeServerThread);
-
                     // 8º.- RANKING: Enviar el ranking actual al nuevo cliente
                     logger.info(String.format("'%s': Enviando el ranking actual a '%s'.",
                             TestChallengeServer.class.getSimpleName(), nickname));
                     out.writeObject(new Mensaje(new Ranking(ranking), TipoMensaje.RANKING_ACTUAL));
                     out.flush();
 
-                    // 9º.- FLAG TEST EN EJECUCION: Enviar el flag de test iniciado al nuevo cliente
-                    logger.info(String.format("'%s': Enviando el flag que indica si hay un test en ejecución a '%s'.",
-                            TestChallengeServer.class.getSimpleName(), nickname));
+                    // 9º.- FLAG TEST EN EJECUCION: Enviar el flag de test iniciado al nuevo cliente                    
                     out.writeObject(new Mensaje(testIniciado, TipoMensaje.TEST_EN_EJECUCION));
                     out.flush();
 
-                     // Si hay un test en ejecución, se le envía al usuario la pregunta enviada
                     if (testIniciado) {
+                        logger.info(String.format("'%s': Enviando el flag que indica que hay un test en ejecución a '%s'.",
+                                TestChallengeServer.class.getSimpleName(), nickname));
+
+                        // Enviar un mensaje al cliente con la parametrización del test
+                        out.writeObject((new Mensaje(testServer.getMensajeInicioTest())));
+                        out.flush();
+                        
+                        // Enviar la pregunta al cliente 
                         Pregunta preguntaEnviada = testServer.getPreguntaEnviada();
                         logger.info(String.format("'%s': Enviando la pregunta al usuario '%s' recién conectado.",
                                 TestChallengeServer.class.getSimpleName(), nickname));
-                        // Envíar la pregunta al usuario
+                        
                         out.writeObject(new Mensaje(preguntaEnviada, TipoMensaje.TEST_PREGUNTA));
                         out.flush();
-                        
+
                         // Incializar la puntuación del usuario para la pregunta enviada cuando se incorpora a un test iniciado
                         testServer.inicializarPuntuacionConTestIniciado(nickname);
                     }
-                    
+
                     // 10º.- FLAG TEST PAUSADO: Enviar el flag de test pausado al nuevo cliente
-                    logger.info(String.format("'%s': Enviando el flag que indica si el test está pausado a '%s'.",
-                            TestChallengeServer.class.getSimpleName(), nickname));
                     out.writeObject(new Mensaje(testPausado, TipoMensaje.TEST_PAUSADO));
                     out.flush();
+                    
+                    if (testPausado) {
+                        logger.info(String.format("'%s': Enviando el flag que indica que el test está pausado a '%s'.",
+                                TestChallengeServer.class.getSimpleName(), nickname));
+                    }
 
-                    // 11º.- Arrancar el hilo de servicio para el nuevo cliente de chat                  
+                    // NOTA: el orden de las operaciones 11 y 12 es importante para que no se produzcan problemas
+                    // en el envío de mensajes.
+                    
+                    // 11º.- Añadir el cliente a la lista de clientes conectados
+                    registrarConexion(testChallengeServerThread);
+
+                    // 12º.- Arrancar el hilo de servicio para el nuevo cliente de chat (de ese modo,
+                    // el cliente empieza a recibir notificaciones desde el servidor (TIMER_TICK, etc):
+                    // Ver clase TestChallengeClientThread.java
                     testChallengeServerThread.start();
 
                     logger.info(String.format("'%s': Thread de servicio para '%s' arrancado.",

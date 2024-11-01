@@ -19,6 +19,7 @@ package com.testchallenge.client.gui;
 
 import com.testchallenge.client.TestChallengeClientThread;
 import com.testchallenge.model.Mensaje;
+import com.testchallenge.model.Pregunta;
 import com.testchallenge.model.Ranking;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -117,24 +118,33 @@ public class TestChallengeClient extends JFrame {
                 testPanel.setRanking(rankingActual, nickname);
 
                 // FLAG TEST EN EJECUCIÓN: Recuperar el flag que indica si hay un test en ejecución
-                Mensaje testEnEjecucionMensaje = (Mensaje) in.readObject();
-                if (testEnEjecucionMensaje.getFlag().equals(Boolean.TRUE)) {
-                    testPanel.resetPanelPreguntas();
+                Mensaje testEnEjecucionFlagMensaje = (Mensaje) in.readObject();
+
+                if (testEnEjecucionFlagMensaje.getFlag().equals(Boolean.TRUE)) {
+                    // Recuperar el mensaje de arranque del test
+                    Mensaje testEnEjecucionInfoMensaje = (Mensaje) in.readObject();
+
+                    // Informar que hay un test en ejecución y mostrar el mensaje de arranque del test
                     chatPanel.addMessage("\n[•] Hay un test en ejecución!");
+                    chatPanel.addMessage(testEnEjecucionInfoMensaje.getTexto());
+
                     // Recibir la pregunta y presentarla en la UI
-                    Mensaje preguntaEnviada = (Mensaje) in.readObject();
-                    testPanel.setPregunta(preguntaEnviada.getPregunta());
+                    Mensaje preguntaEnviadaMensaje = (Mensaje) in.readObject();
+                    Pregunta preguntaEnviada = preguntaEnviadaMensaje.getPregunta();
+                    testPanel.resetPanelPreguntas();
+                    testPanel.setPregunta(preguntaEnviada);
+                    chatPanel.addMessage("\n[•] ".concat(preguntaEnviada.getTitle()));
                 }
 
                 //FLAG TEST_PAUSADO: Recuperar el flag que indica si el test en ejecución está pausado
                 Mensaje testPausadoMensaje = (Mensaje) in.readObject();
+
                 if (testPausadoMensaje.getFlag().equals(Boolean.TRUE)) {
                     chatPanel.addMessage("\n[•] El test, además, está pausado!");
                     // Si el test está pausado, hay que mostrar el botón de play activado
                     // Deshabilitar el panel de configuración y el botón Iniciar Test
                     testPanel.getConfiguracionPanel().setEnabled(false);
                     testPanel.getIniciarTestButton().setEnabled(false);
-                    testPanel.setModoRevisionEnabled(false);
                     testPanel.getPreguntasPanel().setAmpliarSegundosPanelEnabled(false);
                     testPanel.getPreguntasPanel().setStopButtonEnabled(true);
                     testPanel.getPreguntasPanel().setResumeButtonEnabled();
