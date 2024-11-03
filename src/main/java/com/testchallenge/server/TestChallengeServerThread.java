@@ -365,7 +365,7 @@ public final class TestChallengeServerThread extends Thread {
     /**
      * Devuelve los nicknames de los usuarios que se han identificado en el mensaje buscando la expresión regular
      *
-     * @[A-Z0-9]+. Se utiliza una colección de tipo Set para no devolver más de una ocurrencia por nickname. Esto
+     * Se utiliza una colección de tipo Set para no devolver más de una ocurrencia por nickname. Esto
      * evitaría reenvío de un mensaje varias veces a un mismo usuario en el caso de que su nickname apareciera más de
      * una vez en el texto del mensaje.
      *
