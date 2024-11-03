@@ -39,8 +39,7 @@
 
 The application allows to evaluate the level of knowledge of a group of users (or a single user) on a subject/topic by performing tests that run simultaneously on all connected systems. Users accumulate points according to the correctness and speed with which they submit their answers within a time limit. During the execution of the test the system sends notifications of the partial results as users answer the questions. At the end of the test they can review the answers sent with their correction (incorrect answers are shown in red and  correct answers in green), the points obtained and their position in the ranking.
 
-
-In the following [video](https://drive.google.com/file/d/1KAnOZBPvDgBjTooLBfB7LboIwm1NTJhk/view?usp=sharing) it is shown a demo of how the application works.
+The following [video](https://drive.google.com/file/d/1KAnOZBPvDgBjTooLBfB7LboIwm1NTJhk/view?usp=sharing) shows a demo of how the application works.
 
 ## 2. Description
 

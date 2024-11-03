@@ -51,7 +51,7 @@ The following screenshot shows the sequence of steps to follow to configure the 
 
      ![Test execution about to start](screenshots/Test_execution_launched_and_about_to_start.png)
 
-In the following [video](https://drive.google.com/file/d/1KAnOZBPvDgBjTooLBfB7LboIwm1NTJhk/view?usp=sharing) it is shown a demo of how the application works.
+The following [video](https://drive.google.com/file/d/1KAnOZBPvDgBjTooLBfB7LboIwm1NTJhk/view?usp=sharing) shows a demo of how the application works.
 
 ## 2. Where are the questions stored?
 
