@@ -39,6 +39,9 @@
 
 The application allows to evaluate the level of knowledge of a group of users (or a single user) on a subject/topic by performing tests that run simultaneously on all connected systems. Users accumulate points according to the correctness and speed with which they submit their answers within a time limit. During the execution of the test the system sends notifications of the partial results as users answer the questions. At the end of the test they can review the answers sent with their correction (incorrect answers are shown in red and  correct answers in green), the points obtained and their position in the ranking.
 
+
+In the following [video](https://drive.google.com/file/d/1KAnOZBPvDgBjTooLBfB7LboIwm1NTJhk/view?usp=sharing) it is shown a demo of how the application works.
+
 ## 2. Description
 
 The project implements a client-server application to chat and perform group tests in a gamified way by selecting the subject/topic, the level of difficulty and the type of questions, the number of questions of the test, and the time limit to send the answers. On one hand, it consists of a Java server application that manages the communication between users, the messages interchanged between them and the server, and the execution of the tests. On the other hand, it is provided a Java Swing desktop client application with which users, after registering with an alias or nickname, can chat, launch test challenges to the group, review the answers sent and the results obtained according to their correctness.
