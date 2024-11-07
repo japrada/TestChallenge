@@ -137,7 +137,7 @@ Yes, the image is displayed in the upper right corner of the panel containing th
 
 ![Question with an associated image](screenshots/Chapter_3_image_1.png)
 
-The image (.gif, .png, .jpg, .jpeg) can be zoomed in by double-clicking on it and then resized by resizing the pop-up window that is shown (Note: the popup-window showing the image is closed when the focus is lost or when you close it specifically; this has been done this way on purpose).
+The image (.gif, .png, .jpg, .jpeg) can be zoomed in by double-clicking on it and then resized by resizing the pop-up window that is shown (Note: the popup-window showing the image is closed when the focus is lost or when you close it specifically).
 
 ![Pop up window showing the associated image](screenshots/Chapter_3_image_2.png)
 
@@ -147,7 +147,7 @@ Yes, when a question has an mp3 audio file associated with it, it can be played 
 
 ![Question with an associated audio](screenshots/Chapter_4_image_1.png)
 
-In this version only .mp3 file playback has been implemented. You can pause it or stop it, but you cannot go forward or backward. (Note: the popup-window playing the .mp3 file is closed when the focus is lost or when you close it specifically; this has been done this way on purpose).
+In this version only .mp3 file playback has been implemented. You can pause it or stop it, but you cannot go forward or backward. (Note: the popup-window playing the .mp3 file is closed when the focus is lost or when you close it specifically).
 
 ![Pop up window showing the associated audio](screenshots/Chapter_4_image_2.png)
 
