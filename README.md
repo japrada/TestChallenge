@@ -121,39 +121,37 @@ Initially, I had not considered publishing this application and as my native lan
 
 ### 3.12. What features does the application include?
 
-1. Send/receive text chats at any time.
+1. Sen1. Sending/receiving text messages to/from users (text chat).
+   
+2. Launching a test to the group of users configuring the subject/topic, level of difficulty, types of questions, time limit, and number of questions.
+   
+3. Pausing/resuming the execution of a test.
+   
+4. Stopping the execution of a test.
+   
+5. Extending the time limit before sending an answer.
+   
+6. Uploading new questions.
+   
+7. Displaying an image (.gif, .png, .jpg, .jpeg) associated with a question ("fichero_multimedia" field in the JSON file, optional).
+   
+8. Playing an mp3 audio associated with a question ("fichero_multimedia" field in the JSON file, optional).
+   
+9.  Reviewing the results of the test execution highlighting the correct answers in green color and wrong answers in red color.
 
-2. Set the configuration of a test (subject, level, types of questions, time limit, and number of questions) before initiating its execution.
+10. Keeping the ranking with the points of each user.
 
-3. Pause/stop the execution of a test.
+11. Question store based on the server's file system.
 
-4. Extend the time limit before sending an answer.
+12. Five types of questions depending on the type of the answer:
+    * Unica
+    * Múltiple (Note: My apologies for the accent for non Spanish users)
+    * Texto
+    * Emparejada
+    * Multivalor
 
-5. Upload new questions to the server.
+13. Changing the order of the options before sending the question ("desordenar_opciones" field of the JSON definition file; optional, defaults to 'true')
 
-6. Display an image (.gif, .png, .jpg, .jpeg) associated with a question ("fichero_multimedia" field in the JSON file, optional).
-
-7. Play an mp3 audio associated with a question ("fichero_multimedia" field in the JSON file, optional).
-
-8. Review the results of the test execution highlighting hits in green and misses in red with respect to the correct answer.
-
-9. Maintain the ranking of points for each user.
-
-10. A question store based on the server file system.
-
-11. Five types of questions depending on the type of the answer:
-
-- **Unica**
-
-- **Múltiple** (Note: My apologies for the accent for non Spanish users)
-
-- **Texto**
-
-- **Emparejada**
-
-- **Multivalor**
-
-12. Change the order of the options before sending the question ("desordenar_opciones" field of the JSON definition file, optional, defaults to 'true')
 
 ### 3.13. What improvements/enhancements could be made to the application?
 
