@@ -695,7 +695,7 @@ public class TestServer extends Thread {
      * @param mensaje mensaje a enviar a todos los clientes.
      * @throws IOException excepción al enviar el mensaje por el canal de escritura.
      */
-    private void enviarMensaje(Mensaje mensaje) {
+    private synchronized void enviarMensaje(Mensaje mensaje) {
         // Enviar un mensaje a todos los clientes conectados
         List<TestChallengeServerThread> clientesConectados = testChallengeServer.getClientesConectados();
 
@@ -715,7 +715,7 @@ public class TestServer extends Thread {
      * @param mensaje mensaje a enviar al cliente con el nickname <code>nickname</code>.
      * @param nickname cliente conectado con el identificados <code>nickname</code> al que se le envía el mensaje.
      */
-    private void enviarMensaje(Mensaje mensaje, String nickname) {
+    private synchronized void enviarMensaje(Mensaje mensaje, String nickname) {
         try {
             TestChallengeServerThread cst = testChallengeServer.getClienteConectado(nickname);
             cst.getClientDataOut().writeObject(mensaje);
