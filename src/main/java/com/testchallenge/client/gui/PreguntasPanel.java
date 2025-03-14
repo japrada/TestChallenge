@@ -596,7 +596,7 @@ public class PreguntasPanel extends ConectablePanel {
                                 respuestasPanel.getRespuestasSeleccionadas(),
                                 respuestasPanel.getTipoPregunta(),
                                 orden);
-                        if (respuesta.esValida()) {
+                        //if (respuesta.esValida()) {
                             // *********  Enviar la respuesta al servidor *********
                             pregunta.setRespuesta(respuesta);
                             out.writeObject(new Mensaje(respuesta, TipoMensaje.RESPUESTA_ENVIAR));
@@ -612,10 +612,9 @@ public class PreguntasPanel extends ConectablePanel {
                             setPauseResumeButtonEnabled(false);
                             // El botón de Stop test se desactiva al enviar la respuesta.
                             setStopButtonEnabled(false);
-                        } else {
-                            JOptionPane.showMessageDialog(parent,
-                                    "La respuesta no puede ser vacía.");
-                        }
+                        //} else {
+                            //JOptionPane.showMessageDialog(parent, "La respuesta no puede ser vacía.");
+                        //}
                     }
                 } else {
                     // Reactivar la funcionalidad "Enviar respuesta" y, además, habilitar los botones de navegación
@@ -746,11 +745,12 @@ public class PreguntasPanel extends ConectablePanel {
         remove(spRespuestasPanel);
         remove(buttonsPanel);
 
-        respuestasPanel = new RespuestasPanel(preguntaMostrada);
+        respuestasPanel = new RespuestasPanel(preguntaMostrada, true);
         respuestasPanel.setRespuestas(preguntaMostrada.getRespuestasAsArray(),
                 preguntaMostrada.getRespuesta());
 
         respuestasPanel.setEnabled(true);
+     
         spRespuestasPanel = new JScrollPane(respuestasPanel);
         spRespuestasPanel.setPreferredSize(new Dimension(PREGUNTAS_PANEL_ANCHO, PREGUNTAS_PANEL_ALTO));
         spRespuestasPanel.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -912,6 +912,9 @@ public class PreguntasPanel extends ConectablePanel {
                 break;
             case INCORRECTA:
                 puntuacionTitle = Puntuacion.INCORRECTA_MENSAJE;
+                break;
+            case NO_RESPONDIDA:
+                puntuacionTitle = Puntuacion.NO_RESPONDIDA_MENSAJE;
                 break;
             case NO_CONTESTADA:
                 puntuacionTitle = Puntuacion.NO_CONTESTADA_MENSAJE;

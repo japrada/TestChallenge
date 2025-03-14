@@ -174,13 +174,14 @@ public class ChatPanel extends ConectablePanel {
 
                     // Establece la nueva posición del cursor
                     chatTextArea.setCaretPosition(chatTextArea.getText().length());
-                    chatTextArea.getCaret().setVisible(true);
+                    //chatTextArea.getCaret().setVisible(true);
                 }
 
                 logger.info(String.format("'%s': \"Enviando mensaje: '%s' \n",
                         ChatPanel.class.getSimpleName(), messageTextArea.getText()));
 
                 messageTextArea.setText("");
+                messageTextArea.requestFocusInWindow();
 
                 return "Ejecución completada.";
             }

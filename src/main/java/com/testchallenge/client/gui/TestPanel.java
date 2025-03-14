@@ -20,14 +20,20 @@ package com.testchallenge.client.gui;
 import com.testchallenge.model.Configuracion;
 import com.testchallenge.model.Mensaje;
 import com.testchallenge.model.Pregunta;
+import com.testchallenge.model.Puntuacion;
 import com.testchallenge.model.Ranking;
+import com.testchallenge.model.Resultados;
 import com.testchallenge.model.TipoMensaje;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -59,6 +65,9 @@ public class TestPanel extends ConectablePanel {
     private final JButton iniciarTestButton;
     // Preguntas que se van presentando en el test
     private List<Pregunta> preguntas;
+    // Resultados de la ejecución del test
+    private Resultados resultados;
+    
     // Componente contenedor
     private JFrame parent;
 
@@ -136,6 +145,20 @@ public class TestPanel extends ConectablePanel {
         add(rankingYPreguntasPanel, BorderLayout.NORTH);
         add(configuracionPanel, BorderLayout.CENTER);
         add(iniciarTestButton, BorderLayout.SOUTH);
+        
+        // Listener asociado al panel para mostrar los resultados del último test en ejecución
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                // Doble clic detectado
+                if (event.getClickCount() == 2) {
+                    if (resultados != null) {
+                        // Mostramos los resultados del último test ejecutado
+                        popUpResultados(resultados.getPuntosObtenidos(), resultados.getContadores());
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -196,13 +219,43 @@ public class TestPanel extends ConectablePanel {
      * Muestra un cuadro de diálogo con los puntos obtenidos al finalizar el test.
      *
      */
-    public void popUpPuntosObtenidos() {
+    public void popUpResultados() {
         Integer puntosObtenidos = rankingPanel.getPuntosObtenidos();
-        JOptionPane.showMessageDialog(parent,
-                String.format("Ha obtenido '%d' puntos en el test realizado.",
-                        puntosObtenidos));
+        
+         // Obtener los contadores usando Streams
+        Map<Puntuacion, Long> contadores = preguntas.stream()
+                .collect(Collectors.groupingBy(
+                        p -> (p.getPuntuacion() == Puntuacion.CORRECTA) ? Puntuacion.CORRECTA :
+                             (p.getPuntuacion() == Puntuacion.CORRECTA_Y_PRIMERA ) ? Puntuacion.CORRECTA_Y_PRIMERA :
+                             (p.getPuntuacion() == Puntuacion.INCORRECTA) ? Puntuacion.INCORRECTA :
+                             (p.getPuntuacion() == Puntuacion.NO_RESPONDIDA) ? Puntuacion.NO_RESPONDIDA : Puntuacion.NO_CONTESTADA, 
+                        Collectors.counting()
+                ));
+        
+        // Almacenamos los resultados de la ejecución del test para poderlos visualizar durante la revisión
+        resultados = new Resultados(puntosObtenidos, contadores);
+        // Mostramos los resultados
+        popUpResultados(puntosObtenidos, contadores);
     }
 
+    /**
+     * 
+     * @param puntosObtenidos
+     * @param contadores 
+     */
+    private void popUpResultados(Integer puntosObtenidos, Map<Puntuacion, Long> contadores) {
+        StringBuilder sbTextoResultadosObtenidos = new StringBuilder();
+        
+        sbTextoResultadosObtenidos.append(String.format("Ha obtenido '%d' puntos en el test realizado.\n\n", puntosObtenidos));
+        sbTextoResultadosObtenidos.append(String.format("[•] Ha respondido el primero correctamente '%d' preguntas.\n", contadores.getOrDefault(Puntuacion.CORRECTA_Y_PRIMERA, 0L)));        
+        sbTextoResultadosObtenidos.append(String.format("[•] Ha respondido correctamente, sin ser el primero, '%d' preguntas.\n", contadores.getOrDefault(Puntuacion.CORRECTA, 0L)));
+        sbTextoResultadosObtenidos.append(String.format("[•] Ha respondido incorrectamente '%d' preguntas.\n", contadores.getOrDefault(Puntuacion.INCORRECTA, 0L)));
+        sbTextoResultadosObtenidos.append(String.format("[•] No ha respondido '%d' preguntas.\n", contadores.getOrDefault(Puntuacion.NO_RESPONDIDA, 0L)));
+        sbTextoResultadosObtenidos.append(String.format("[•] No ha enviado respuesta en '%d' preguntas.\n", contadores.getOrDefault(Puntuacion.NO_CONTESTADA, 0L)));
+        
+        JOptionPane.showMessageDialog(parent, sbTextoResultadosObtenidos.toString());
+    }
+    
     /**
      * Muestra un cuadro de diálogo indicando que no hay preguntas que cumplan los criterios seleccionados para ejecutar
      * el test.
@@ -273,6 +326,7 @@ public class TestPanel extends ConectablePanel {
      */
     public void resetPanelPreguntas() {
         // Resetear el panel antes de empezar un nuevo test
+        resultados = null;
         rankingYPreguntasPanel.remove(preguntasPanel);
         preguntasPanel = new PreguntasPanel("Preguntas", out);
         rankingYPreguntasPanel.add(preguntasPanel);

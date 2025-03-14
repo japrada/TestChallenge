@@ -49,6 +49,9 @@ public class RankingPanel extends JPanel {
 
     // Tabla con las puntuaciones de los usuarios
     private final JTable rankingTable;
+    
+    // Ranking con las puntuaciones
+    private Ranking ranking;
 
     // Dimensiones del Panel
     private final static int RANKING_PANEL_ANCHO = 125;
@@ -84,13 +87,22 @@ public class RankingPanel extends JPanel {
     }
 
     /**
-     * Devuelve el número de puntos obtenidos en el último test realizado.
+     * Obtiene el número de puntos obtenidos en el último test realizado a partir de la información del 
+     * ranking que se ha facilitado.
      * 
      * @return puntos obtenidos en el último test realizado.
      * 
      */
     public Integer getPuntosObtenidos() {
         return puntosObtenidos;
+    }
+    
+    /**
+     * Obtiene  
+     * @return 
+     */
+    public Ranking getRanking() {
+        return ranking;
     }
     
     /**
@@ -101,8 +113,10 @@ public class RankingPanel extends JPanel {
      */
     public void setRanking(Ranking ranking, String nickname) {
 
+        this.ranking = ranking;
+        
         // Calcular los puntos que ha obtenido (nuevo ranking - ranking actual)
-        calcularPuntosObtenidos (ranking, nickname);
+        calcularPuntosObtenidos (nickname);
         
         // Crear el modelo a partir de las puntuaciones del ranking
         TableModel newRankingTableModel = new RankingTableModel(ranking.getPuntuacionesAsArray());
@@ -148,10 +162,9 @@ public class RankingPanel extends JPanel {
      * Calcula el número de puntos obtenidos en el último test ejecutado haciendo la diferencia entre el total
      * de puntos acumulados y el número de puntos del ranking actual.
      * 
-     * @param ranking ranking con los puntos actualizados
      * @param nickname usuario conectado
      */
-    private void calcularPuntosObtenidos(Ranking ranking, String nickname) {
+    private void calcularPuntosObtenidos(String nickname) {
         Integer nuevaPuntuacion = ranking.getPuntuaciones().get(nickname);
 
         if (nuevaPuntuacion != null) {

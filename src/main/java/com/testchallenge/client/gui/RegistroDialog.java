@@ -295,15 +295,19 @@ class RegistroDialog extends JDialog {
             // Obtener la información de dirección IP y puerto del socket de conexión del sistema cliente
             String dirIPCliente = serverDataSocket.getLocalAddress().toString();
             int puertoCliente = serverDataSocket.getLocalPort();
+            
+            // Dirección IP y puerto del servidor con el que el cliente ha conectado
+            server = serverDataSocket.getInetAddress().getHostName();
+            port = serverDataSocket.getPort();
 
             StringBuilder sb = new StringBuilder();
-            sb.append(String.format("'%s': Conexión establecida desde la dirección IP '%s' puerto '%d'\n",
-                    TestChallengeClient.class.getSimpleName(), dirIPCliente, puertoCliente));
+            sb.append(String.format("'%s': Conexión establecida desde '%s':'%d' con el servidor '%s':'%d'.\n",
+                    RegistroDialog.class.getSimpleName(), dirIPCliente, puertoCliente, server, port));
 
             // Enviar el nickname al servidor, para que lo valide
             String nickname = this.usuarioField.getText();
             sb.append(String.format("'%s': Registrando nickname '%s' ...\n",
-                    TestChallengeClient.class.getSimpleName(), nickname));
+                    RegistroDialog.class.getSimpleName(), nickname));
 
             // Obtener el stream de escritura para la comunicación con el servidor y enviar el mensaje
             out = new ObjectOutputStream(serverDataSocket.getOutputStream());
@@ -323,7 +327,7 @@ class RegistroDialog extends JDialog {
                 erroresTextArea.setText(String.format("El nickname '%s' ya está registrado.", nickname));
                 // Informar que el nickname está duplicado y no se ha podido iniciar una sesión
                 logger.info(String.format("'%s': nickname '%s' duplicado. Sesión no iniciada.",
-                        TestChallengeClient.class.getSimpleName(), nickname));
+                        RegistroDialog.class.getSimpleName(), nickname));
             }
 
         } catch (IOException | NumberFormatException | ClassNotFoundException e) {

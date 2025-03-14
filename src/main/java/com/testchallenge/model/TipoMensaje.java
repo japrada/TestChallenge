@@ -59,6 +59,8 @@ public enum TipoMensaje implements Serializable {
     PREGUNTA_CONTESTADA_CORRECTAMENTE("PREGUNTA_CONTESTADA_CORRECTAMENTE"),
     // Pregunta NO contestada correctamente
     PREGUNTA_NO_CONTESTADA_CORRECTAMENTE("PREGUNTA_NO_CONTESTADA_CORRECTAMENTE"),
+    // Pregunta enviada sin ninguna respuesta seleccionada
+    PREGUNTA_NO_RESPONDIDA ("PREGUNTA_NO_RESPONDIDA"),
     // Pregunta NO contestada
     PUNTUACION_PREGUNTA_NO_CONTESTADA("PUNTUACION_PREGUNTA_NO_CONTESTADA"),
     // Detener el test en ejecución

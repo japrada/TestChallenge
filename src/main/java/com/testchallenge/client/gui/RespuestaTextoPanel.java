@@ -15,12 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with 'TestChallenge'. If not, see <https://www.gnu.org/licenses/>.
  */
-
 package com.testchallenge.client.gui;
 
 import com.testchallenge.model.Respuesta;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.util.List;
 import javax.swing.JLabel;
@@ -53,16 +51,24 @@ public class RespuestaTextoPanel extends RespuestasPanel {
         // El área de texto se utiliza para escribir la respuesta a enviar y para mostrar las
         // opciones que son correctas para este tipo de pregunta.
         respuestaTextArea = new JTextArea("");
-        
+
         JScrollPane respuestaScrollPane = new JScrollPane(respuestaTextArea);
         respuestaScrollPane.setPreferredSize(new Dimension(RESPUESTA_TEXTO_PANEL_ANCHO, RESPUESTA_TEXTO_PANEL_ALTO));
-        
+
         add(respuestaScrollPane, BorderLayout.SOUTH);
     }
 
     @Override
     public String[] getRespuestasSeleccionadas() {
-        return new String[]{respuestaTextArea.getText().trim()};
+        String respuesta = respuestaTextArea.getText().trim();
+
+        // Si no se ha escrito ninguna respuesta, entonces se devuelve un String[] vacío.
+        if (respuesta.isBlank()) {
+            return new String[]{};
+        }
+
+        // En caso contrario, se devuelve un String con un único elemento conteniendo la respuesta.
+        return new String[]{respuesta};
     }
 
     @Override
@@ -79,21 +85,29 @@ public class RespuestaTextoPanel extends RespuestasPanel {
 
         if (respuestaEnviada != null) {
             opcionesSeleccionadas = respuestaEnviada.getOpcionesSeleccionadas();
-            respuestaEnviadaLabel.setText(opcionesSeleccionadas.get(0));
-            respuestaEnviadaLabel.setForeground(Color.RED);
         }
 
+        // Si una de las respuestas coincide con la respuesta enviada la marcamos en verde, subrayada y en negrita 
         StringBuilder sbRespuestas = new StringBuilder();
+        
+        boolean blnCorrectaEncontrada = false;
         for (String aRespuesta : respuestas) {
-            if (opcionesSeleccionadas != null && opcionesSeleccionadas.indexOf(aRespuesta) >= 0) {
-                respuestaEnviadaLabel.setForeground(Color.GREEN);
+            if (!blnCorrectaEncontrada) {
+                if (opcionesSeleccionadas != null && !opcionesSeleccionadas.isEmpty()) {
+                    if (opcionesSeleccionadas.indexOf(aRespuesta) >= 0) {
+                        setOpcionCorrecta(respuestaEnviadaLabel, aRespuesta);
+                        blnCorrectaEncontrada = true;
+                    } else {
+                        setOpcionIncorrecta(respuestaEnviadaLabel, opcionesSeleccionadas.get(0));
+                    }
+                }
             }
             sbRespuestas.append(aRespuesta).append("\n");
         }
 
         respuestaEnviadaLabel.setVisible(true);
         respuestaTextArea.setText(sbRespuestas.toString());
-        respuestaTextArea.setEnabled(false);
+        respuestaTextArea.setEditable(false);
 
     }
 

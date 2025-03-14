@@ -15,18 +15,19 @@
  * You should have received a copy of the GNU General Public License
  * along with 'TestChallenge'. If not, see <https://www.gnu.org/licenses/>.
  */
-
 package com.testchallenge.client.gui;
 
 import com.testchallenge.model.Respuesta;
-import java.awt.Color;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
 import javax.swing.JRadioButton;
+import javax.swing.JToggleButton;
 
 /**
  * Panel que muestra una o varias opciones seleccionables mediante componentes de tipo JRadioButton.
@@ -37,14 +38,34 @@ public class RespuestaRadioPanel extends RespuestasPanel {
 
     // Agrupa las opciones para que sólo se pueda seleccionar una
     private final ButtonGroup opcionesGroup;
+    // Referencia a la opción seleccionada para poder deseleccionarla
+    private JRadioButton opcionSeleccionada;
+    // Flag para bloquear la selección de otra opción
+    private boolean opcionBloqueada = false;
+    
+    // Respuesta enviada: se guarda la referencia cuando se establecen las opciones para ser utilizada por el listener
+    private Respuesta respuestaEnviada;
 
     /**
-     * Construye un panel de objetos <code>JRadioButton</code> con las opciones especificadas.
+     * Construye un panel de objetos <code>JRadioButton</code> con las opciones especificadas con el 
+     * modo de revisión desactivado.
      * 
-     * @param opciones array con las opciones a mostrar.
+     * @param opciones 
      */
     public RespuestaRadioPanel(String opciones[]) {
-        super(opciones);
+        this(opciones, false);
+    }
+    
+    /**
+     * Construye un panel de objetos <code>JRadioButton</code> con las opciones especificadas y el 
+     * modo de revisión indicado.
+     *
+     * @param opciones array con las opciones a mostrar.
+     * @param revisionEnabled <code>true</code> si el panel se muestra con el modo de revisión activado o
+     * <code>false</code> en caso contrario.
+     */
+    public RespuestaRadioPanel(String opciones[], boolean revisionEnabled) {
+        super(opciones, revisionEnabled);
 
         // Layout utilizado para mostrar las opciones
         setLayout(new GridLayout(opciones.length + 1, 1));
@@ -52,8 +73,44 @@ public class RespuestaRadioPanel extends RespuestasPanel {
         opcionesGroup = new ButtonGroup();
 
         for (String opcion : opciones) {
-            JRadioButton opcionButton = new JRadioButton(opcion);
+
+            JRadioButton opcionButton = new JRadioButton(toHTML(opcion));
+
             opcionButton.setActionCommand(opcion);
+
+            // ¿Se está monstrando la respuesta en modo revisión?
+            if (!revisionEnabled) {
+                // Si no estamos revisando las respuestas enviadas, ponemos un actionListener que permita 
+                // deseleccionar la opción seleccionada.
+                ActionListener deselectListener = (ActionEvent e) -> {
+                    JRadioButton clickedButton = (JRadioButton) e.getSource();
+                    if (clickedButton == opcionSeleccionada) {
+                        opcionesGroup.clearSelection();
+                        opcionSeleccionada = null;
+                    } else {
+                        opcionSeleccionada = clickedButton;
+                    }
+                };
+                opcionButton.addActionListener(deselectListener);
+            } else {
+                // Si estamos revisando las respuestas enviadas, modificamos el comportamiento del botón para evitar
+                // que el usuario pueda deseleccionar la opción.
+                JToggleButton.ToggleButtonModel model = new JToggleButton.ToggleButtonModel() {
+                    @Override
+                    public void setSelected(boolean b) {
+                        if (!opcionBloqueada || super.isSelected()) {
+                            // Si el usuario no ha enviado respuesta o esta es vacía, entonces no dejamos hacer la selección
+                            if (respuestaEnviada != null && !respuestaEnviada.isEmpty())
+                                super.setSelected(b);
+                            // Bloqueamos cambios después de la primera selección
+                            opcionBloqueada = true; 
+                        }
+                    }
+                };
+                opcionButton.setModel(model);
+            }
+
+            // Cambiar el modelo de selección del grupo
             opcionesGroup.add(opcionButton);
             add(opcionButton);
         }
@@ -85,23 +142,24 @@ public class RespuestaRadioPanel extends RespuestasPanel {
     public void setRespuestas(String[] respuestas, Respuesta respuestaEnviada) {
         List<String> opcionesSeleccionadas = null;
 
+        this.respuestaEnviada = respuestaEnviada;
+        
         if (respuestaEnviada != null) {
             opcionesSeleccionadas = respuestaEnviada.getOpcionesSeleccionadas();
         }
 
         for (Enumeration<AbstractButton> opcionesButton = opcionesGroup.getElements(); opcionesButton.hasMoreElements();) {
             AbstractButton opcionButton = opcionesButton.nextElement();
-            String respuesta = opcionButton.getText();
-            if (respuesta.equals(respuestas[0])) {
-                opcionButton.setSelected(true);
-                if (opcionesSeleccionadas != null && opcionesSeleccionadas.indexOf(respuesta) >= 0) {
-                    opcionButton.setForeground(Color.GREEN);
-                }
+
+            String opcion = toText(opcionButton.getText());
+
+            // Si la opción que se está procesando coincide con la respuesta correcta ...
+            if (opcion.equals(respuestas[0])) {
+                // la mostramos subrayada y en verde y, además, si coincide con la seleccionada por el usuario, en negrita
+                setOpcionCorrecta(opcionButton, opcionesSeleccionadas, opcion);
             } else {
-                opcionButton.setSelected(false);
-                if (opcionesSeleccionadas != null && opcionesSeleccionadas.indexOf(respuesta) >= 0) {
-                    opcionButton.setForeground(Color.RED);
-                }
+                // en caso contrario, la mostramos en rojo
+                setOpcionIncorrecta(opcionButton, opcionesSeleccionadas, opcion);
             }
         }
     }

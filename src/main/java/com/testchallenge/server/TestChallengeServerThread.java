@@ -187,7 +187,6 @@ public final class TestChallengeServerThread extends Thread {
                     // Analizar si el mensaje contiene la expresión regular @<nickname> de uno o más usuarios. Si el nickname
                     // se corresponde con alguno de los usuarios conectados, se lo envía sólo a ese usuario.
                     if (!tipoMensaje.equals(TipoMensaje.BYE)) {
-                        logger.info(String.format("El mensaje recibido es: %s", mensaje));
                         switch (tipoMensaje) {
                             // Se recibe la solicitud de inicio de test enviada por parte del usuario
                             case INICIAR_TEST:
@@ -277,6 +276,7 @@ public final class TestChallengeServerThread extends Thread {
      * @throws IOException excepción generada al enviar el mensaje por el canal de escritura
      */
     private void enviarMensaje(String mensaje) throws IOException {
+        logger.info(mensaje);
         // y se lo reenvía a todos los clientes conectados (menos a él mismo) al servidor de chat
         List<TestChallengeServerThread> clientesConectados = testChallengeServer.getClientesConectados();
         for (TestChallengeServerThread cst : clientesConectados) {
@@ -301,6 +301,7 @@ public final class TestChallengeServerThread extends Thread {
      * @throws IOException excepción generada al enviar el mensaje por el canal de escritura
      */
     private void reenviarMensaje(String mensaje) throws IOException {
+        logger.info(String.format("Reenvío del mensaje '%s'.\n", mensaje));
         Set<String> nicknames = getNicknames(mensaje);
         String chatMessage = String.format("@%s:%s", nickname, mensaje);
         if (!nicknames.isEmpty()) {
@@ -318,6 +319,7 @@ public final class TestChallengeServerThread extends Thread {
      * @throws IOException excepción generada al enviar el mensaje por el canal de escritura
      */
     private void reenviarMensajeAlResto(String mensaje) throws IOException {
+        logger.info(String.format("El mensaje '%s' se reenvía al resto de usuarios.\n",mensaje));
         // y se lo reenvía a todos los clientes conectados (menos a él mismo) al servidor de chat
         List<TestChallengeServerThread> clientesConectados = testChallengeServer.getClientesConectados();
         
@@ -441,9 +443,6 @@ public final class TestChallengeServerThread extends Thread {
         // Enviar un mensaje a todos los usuarios (incluído el que sube la pregunta)
         enviarMensaje(String.format("------> El usuario @%s ha subido una nueva pregunta de tipo '%s'.\n",
                 nickname, pregunta.getTipo().getTipo()));
-        
-        logger.info(String.format(String.format("------> El usuario @%s ha subido una nueva pregunta:\n%s",
-                nickname, pregunta.toString())));
     }
     
 }

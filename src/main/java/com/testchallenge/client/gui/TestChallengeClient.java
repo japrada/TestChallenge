@@ -51,8 +51,6 @@ public class TestChallengeClient extends JFrame {
     private static TestPanel testPanel;
     // Diálogo con el que se inicia la aplicación para realizar el registro del usuario
     private static RegistroDialog establecerConexionDialog;
-    // nickname o alias del cliente que se conecta al chat
-    private static String nickname;
     //Stream utilizado para la lectura de datos enviados desde el servidor
     private static ObjectInputStream in = null;
     //Stream utilizado para la escritura de datos hacia el servidor
@@ -63,7 +61,7 @@ public class TestChallengeClient extends JFrame {
     private final static Logger logger = Logger.getLogger(TestChallengeClient.class.getName());
 
     // Dimensiones del Frame
-    private final static int CHAT_CLIENT_FRAME_ANCHO = 1410;
+    private final static int CHAT_CLIENT_FRAME_ANCHO = 1430; // 1410
     private final static int CHAT_CLIENT_FRAME_ALTO = 830;
     // Posicion del Divider del JSplitPane
     private final static int DIVIDER_LOCATION = 290;
@@ -82,15 +80,19 @@ public class TestChallengeClient extends JFrame {
                 testChallengeClient = new TestChallengeClient("", "", "");
             }
 
-            nickname = establecerConexionDialog.getNickname();
+            
             serverDataSocket = establecerConexionDialog.getServerDataSocket();
             in = establecerConexionDialog.getInputStream();
             out = establecerConexionDialog.getOutputStream();
 
             try {
 
+                String nickname = establecerConexionDialog.getNickname();
+                String server = establecerConexionDialog.getServer();
+                int port = establecerConexionDialog.getPort();
+                
                 // Construir la GUI
-                buildGUI(nickname);
+                buildGUI(nickname, server, port);
 
                 StringBuilder sb = new StringBuilder();
                 // Recibir los nicknames de los clientes conectados en ese momento
@@ -117,6 +119,7 @@ public class TestChallengeClient extends JFrame {
                 Ranking rankingActual = rankingActualMensaje.getRanking();
                 testPanel.setRanking(rankingActual, nickname);
 
+            
                 // FLAG TEST EN EJECUCIÓN: Recuperar el flag que indica si hay un test en ejecución
                 Mensaje testEnEjecucionFlagMensaje = (Mensaje) in.readObject();
 
@@ -200,11 +203,13 @@ public class TestChallengeClient extends JFrame {
      * Método helper para la construcción de la GUI de la aplicación.
      *
      * @param nickname alias del usuario para el que se construye la GUI.
+     * @param server servidor con el que el usuario ha establecido la conexión.
+     * @param port puerto en el servidor que está ofreciendo el servicio.
      */
-    private static void buildGUI(String nickname) {
+    private static void buildGUI(String nickname, String server, int port) {
 
         testChallengeClient.setTitle(
-                String.format("Usuario conectado: @%s", nickname));
+                String.format("Usuario conectado: @%s [Servidor: %s, Puerto: %d]", nickname, server, port));
 
         // ********************
         // *    Chat panel    *

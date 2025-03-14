@@ -299,6 +299,7 @@ public class TestChallengeServer extends Thread {
      */
     public synchronized void startTest(String nickname, Configuracion configuracion) {
         if (!testIniciado) {
+            logger.info(String.format("------> El usuario @%s ha solicitado ejecutar un test.\n", nickname));
             // Notificar a todos los clientes (salvo el que ha solicitado el inicio del test) 
             // que empieza un nuevo Test, para que reajusten la interfaz 
             enviarTestIniciar(nickname);

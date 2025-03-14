@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with 'TestChallenge'. If not, see <https://www.gnu.org/licenses/>.
  */
-
 package com.testchallenge.client;
 
 import com.testchallenge.client.gui.TestChallengeClient;
@@ -30,8 +29,9 @@ import java.io.ObjectInputStream;
 import java.util.logging.Logger;
 
 /**
- * Thread de servicio creado por <code>TestChallengeClient</code> que lee asíncronamente los mensajes que los otros clientes
- * envían al chat (actuando el servidor como intermediario), así como las notificaciones enviadas por el servidor.
+ * Thread de servicio creado por <code>TestChallengeClient</code> que lee asíncronamente los mensajes que los otros
+ * clientes envían al chat (actuando el servidor como intermediario), así como las notificaciones enviadas por el
+ * servidor.
  *
  * @author jprada
  */
@@ -119,7 +119,7 @@ public class TestChallengeClientThread extends Thread {
                                 testChallengeClient.getTestPanel().setRanking(ranking, nickname);
                                 testChallengeClient.getTestPanel().setModoRevisionEnabled(true);
                                 // Mostrar un diálogo para informar del número de puntos obtenidos
-                                testChallengeClient.getTestPanel().popUpPuntosObtenidos();
+                                testChallengeClient.getTestPanel().popUpResultados();
                             } else {
                                 testChallengeClient.getTestPanel().setModoRevisionEnabled(false);
                                 testChallengeClient.getChatPanel().addMessage("No hay preguntas con los criterios especificados.");
@@ -130,7 +130,7 @@ public class TestChallengeClientThread extends Thread {
                             testChallengeClient.getTestPanel().getConfiguracionPanel().setEnabled(true);
                             testChallengeClient.getTestPanel().getIniciarTestButton().setEnabled(true);
                             break;
-                        
+
                         case TEST_PAUSADO:
                             // Desde el lado del servidor se notifica a los clientes que el test se pausa ...
                             // *****************
@@ -157,15 +157,20 @@ public class TestChallengeClientThread extends Thread {
                             testChallengeClient.getTestPanel().getPreguntasPanel().
                                     setPuntuacionPreguntaActual(Puntuacion.CORRECTA_Y_PRIMERA);
                             break;
+                        case PREGUNTA_CONTESTADA_CORRECTAMENTE:
+                            // Si la respuesta enviada es correcta, pero el usuario no ha sido el primero en contestar
+                            testChallengeClient.getTestPanel().getPreguntasPanel().
+                                    setPuntuacionPreguntaActual(Puntuacion.CORRECTA);
+                            break;
                         case PREGUNTA_NO_CONTESTADA_CORRECTAMENTE:
                             // Si la respuesta enviada por el usuario es incorrecta, se actualiza la puntuación
                             testChallengeClient.getTestPanel().getPreguntasPanel().
                                     setPuntuacionPreguntaActual(Puntuacion.INCORRECTA);
                             break;
-                        case PREGUNTA_CONTESTADA_CORRECTAMENTE:
-                            // Si la respuesta enviada es correcta, pero el usuario no ha sido el primero en contestar
+                        case PREGUNTA_NO_RESPONDIDA:
+                            // Si la respuesta enviada no contiene opciones seleccionadas
                             testChallengeClient.getTestPanel().getPreguntasPanel().
-                                    setPuntuacionPreguntaActual(Puntuacion.CORRECTA);
+                                    setPuntuacionPreguntaActual(Puntuacion.NO_RESPONDIDA);
                             break;
                         default:
                             // En cualquier otro caso, se asume que se trata de un intercambio de mensajes de texto en el chat

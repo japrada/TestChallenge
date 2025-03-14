@@ -150,7 +150,7 @@ Initially, I had not considered publishing this application and as my native lan
     * Emparejada
     * Multivalor
 
-13. Changing the order of the options before sending the question ("desordenar_opciones" field of the JSON definition file; optional, defaults to 'true')
+13.Changing the order of the options before sending the question ("desordenar_opciones" field of the JSON definition file; optional, defaults to 'true')
 
 
 ### 3.13. What improvements/enhancements could be made to the application?

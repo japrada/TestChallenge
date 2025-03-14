@@ -19,6 +19,7 @@
 package com.testchallenge.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +29,12 @@ import java.util.Map;
  * @author japrada
  */
 public class Ranking implements Serializable {
-
+    
+    // Fecha de inicio del test asociado al ranking
+    private Date startDate;
+    // Fecha de finalización del test asociado al ranking
+    private Date endDate;
+    
     // Puntuaciones de los usuarios
     private Map<String, Integer> puntuaciones;
 
@@ -81,9 +87,46 @@ public class Ranking implements Serializable {
         this.puntuaciones = ranking;
     }
 
+    /**
+     * Obtiene la fecha de inicio del test.
+     * 
+     * @return fecha de inicio del test.
+     */
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    /**
+     * Establece la fecha de inicio del test.
+     * 
+     * @param startDate fecha de inicio del test.
+     */
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    /**
+     * Obtiene la fecha de finalización del test.
+     * 
+     * @return fecha de finalización del test.
+     */
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    /**
+     * Establece la fecha de finalización del test.
+     * 
+     * @param endDate fecha de finalización del test.
+     */
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    
     @Override
     public String toString() {
-        return "Resultados{" + "resultados=" + puntuaciones + '}';
+        return "Puntuaciones {" + "puntuaciones=" + puntuaciones + '}';
     }
 
 }

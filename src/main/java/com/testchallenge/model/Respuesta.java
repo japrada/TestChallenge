@@ -36,6 +36,8 @@ public class Respuesta implements Serializable {
     private TipoPregunta tipoPregunta;
     // Número de orden de la pregunta (en un test) con la que está asociada la respuesta
     private Integer numeroPregunta;
+    // Valor por defecto seleccionado en las respuestas de tipo "Emparejada" y "Multivalor"
+    public static final String OPCION_POR_DEFECTO_EMPAREJADA_MULTIVALOR = "-";
 
     /**
      * Construye un objeto <code>Respuesta</code> con sus valores por defecto.
@@ -195,6 +197,49 @@ public class Respuesta implements Serializable {
         return blnEsValida;
     }
 
+    /**
+     * En las preguntas de tipo "Emparejada" o "Multivalor", cuando el usuario envía la respuesta
+     * sin haber seleccionado ningún valor, por defecto se envía el valor establecido en la constante
+     * <code>OPCION_POR_DEFECTO_EMPAREJADA_MULTIVALOR</code>.
+     * 
+     * La respuesta a una pregunta de alguno de estos dos tipos, cuando tiene el valor por defecto en 
+     * todas las opciones, se considera que ha sido "saltada" o "no contestada" por el usuario 
+     * (se ha enviado, pero no se ha contestado).
+     * 
+     * Este método devuelve <code>true</code> si se ha enviado una respuesta con el valor por defecto
+     * en todas las opciones para los tipos de pregunta indicados, o <code>false</code> en caso 
+     * contrario.
+     * 
+     * @return <code>true</code> si se ha enviado una respuesta con el valor por defecto
+     * en todas las opciones para los tipos de pregunta indicados, o <code>false</code> en caso 
+     * contrario.
+     */
+    public boolean isRespuestaPorDefecto(){
+        boolean blnEsRespuestaPorDefecto;
+
+         switch (tipoPregunta) {
+            case RESPUESTA_EMPAREJADA:
+            case RESPUESTA_MULTIVALOR:
+                blnEsRespuestaPorDefecto = 
+                        opciones.stream().allMatch(OPCION_POR_DEFECTO_EMPAREJADA_MULTIVALOR::equals);
+                break;
+            default:
+                blnEsRespuestaPorDefecto = false;
+         }
+         return blnEsRespuestaPorDefecto;
+    }
+    
+    /**
+     * Devuelve <code>true</code> si la lista de opciones de la pregunta es vacía (i.e no se ha seleccionado
+     * ninguna opción en la pregunta cuando se envía la respuesta), o <code>false</code> en caso contrario.
+     * 
+     * @return <code>true</code> si la lista de opciones de la pregunta es vacía (i.e no se ha seleccionado
+     * ninguna opción en la pregunta cuando se envía la respuesta), o <code>false</code> en caso contrario.
+     */
+    public boolean isEmpty() {
+        return opciones.isEmpty();
+    }
+    
     @Override
     public String toString() {
         return "Respuesta{" + "respuestas=" + this.opciones + '}';
@@ -245,9 +290,9 @@ public class Respuesta implements Serializable {
                 }
                 break;
             case RESPUESTA_TEXTO_LIBRE:
-                if (opciones.isEmpty() && !respuesta.getOpcionesSeleccionadas().isEmpty()) {
+                if (opciones.isEmpty() && !respuesta.isEmpty()) {
                     blnSonIguales = false;
-                } else if (respuesta.getOpcionesSeleccionadas().isEmpty() && !opciones.isEmpty()) {
+                } else if (respuesta.isEmpty() && !opciones.isEmpty()) {
                     blnSonIguales = false;
                 } else {
                     if (opciones.size() == 1) {

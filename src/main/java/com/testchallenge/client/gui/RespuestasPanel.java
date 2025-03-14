@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with 'TestChallenge'. If not, see <https://www.gnu.org/licenses/>.
  */
-
 package com.testchallenge.client.gui;
 
 import com.testchallenge.model.Pregunta;
@@ -31,10 +30,10 @@ import java.awt.Dimension;
  *
  * En el sistema se han definido los siguientes tipos de preguntas/respuestas:
  *
- * - <code>RespuestaRadioPanel</code>: muestra varias respuestas y sólo se puede seleccionar una.
- * - <code>RespuestaMultiComboPanel</code>: muestra una lista de opciones seleccionables para cada respuesta.
- * - <code>RespuestaMultiCheckPanel</code>: muestra varias respuestas y se pueden seleccionar una o varias.
- * - <code>RespuestaTextoPanel</code>: muestra un área de texto en la que se puede escribir una respuesta.
+ * - <code>RespuestaRadioPanel</code>: muestra varias respuestas y sólo se puede seleccionar una. -
+ * <code>RespuestaMultiComboPanel</code>: muestra una lista de opciones seleccionables para cada respuesta. -
+ * <code>RespuestaMultiCheckPanel</code>: muestra varias respuestas y se pueden seleccionar una o varias. -
+ * <code>RespuestaTextoPanel</code>: muestra un área de texto en la que se puede escribir una respuesta.
  *
  * @author japrada
  */
@@ -48,6 +47,8 @@ public class RespuestasPanel extends SeleccionablePanel {
     protected TipoPregunta tipoPregunta;
     // Número de pregunta
     protected Integer numeroPregunta;
+    // Flag que indica si el panel de respuestas se está mostrando en modo revisión, para la gestión de los listeners
+    protected boolean revisionEnabled;
 
     // Dimensiones del Panel
     private final static int RESPUESTAS_PANEL_ANCHO = 500;
@@ -59,20 +60,44 @@ public class RespuestasPanel extends SeleccionablePanel {
      * Construye un panel de respuestas vacío.
      */
     public RespuestasPanel() {
-        this(new String[]{});
+        this(new String[]{}, false);
     }
-
+    
     /**
      * Constructor.
-     *
+     * 
      * Construye un panel de respuestas con las opciones indicadas.
-     *
+     * 
      * @param opciones respuestas que se pueden seleccionar.
      */
     public RespuestasPanel(String opciones[]) {
+        this (opciones, false);
+    }
+    
+    /**
+     * Constructor.
+     * 
+     * Construye un panel de respuestas con las opciones indicadas.
+     *
+     * @param opciones respuestas que se pueden seleccionar.
+     * @param revisionEnabled <code>true</code> si el modo de revisión está enabled o <code>false</code> en caso contrario.
+     */
+    public RespuestasPanel(String opciones[], boolean revisionEnabled) {
         this.opciones = opciones;
+        this.revisionEnabled = revisionEnabled;
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(RESPUESTAS_PANEL_ANCHO, RESPUESTAS_PANEL_ALTO));
+    }
+    
+    /**
+     * Constructor.
+     *
+     * Construye un panel de respuestas a partir de la pregunta, con el modo de revisión desactivado.
+     *
+     * @param pregunta pregunta a partir de la cual se construye el panel de respuestas.
+     */
+    public RespuestasPanel(Pregunta pregunta) {
+        this(pregunta, false);
     }
 
     /**
@@ -81,19 +106,22 @@ public class RespuestasPanel extends SeleccionablePanel {
      * Construye un panel de respuestas a partir de la pregunta.
      *
      * @param pregunta pregunta a partir de la cual se construye el panel de respuestas.
+     * @param revisionEnabled <code>true</code> si la pregunta se muestra con el modo de revisión activado o
+     * <code>false</code> en caso contrario.
      */
-    public RespuestasPanel(Pregunta pregunta) {
-        this(pregunta.getOpcionesAsArray());
+    public RespuestasPanel(Pregunta pregunta, boolean revisionEnabled) {
+        this(pregunta.getOpcionesAsArray(), revisionEnabled);
+        
         this.tipoPregunta = pregunta.getTipo();
         this.numeroPregunta = pregunta.getNumeroOrden();
 
         switch (tipoPregunta) {
             case RESPUESTA_MULTIPLE:
-                respuestasPanel = new RespuestaMultiCheckPanel(opciones);
+                respuestasPanel = new RespuestaMultiCheckPanel(opciones, revisionEnabled);
                 add(respuestasPanel, BorderLayout.NORTH);
                 break;
             case RESPUESTA_UNICA:
-                respuestasPanel = new RespuestaRadioPanel(opciones);
+                respuestasPanel = new RespuestaRadioPanel(opciones, revisionEnabled);
                 add(respuestasPanel, BorderLayout.NORTH);
                 break;
             case RESPUESTA_TEXTO_LIBRE:
@@ -103,7 +131,7 @@ public class RespuestasPanel extends SeleccionablePanel {
             case RESPUESTA_EMPAREJADA:
             case RESPUESTA_MULTIVALOR:
                 respuestasPanel = new RespuestaMultiComboPanel(opciones,
-                        pregunta.getValoresOpcionesAsArray());
+                        pregunta.getValoresOpcionesAsArray(), revisionEnabled);
                 add(respuestasPanel, BorderLayout.NORTH);
                 break;
         }
@@ -129,7 +157,7 @@ public class RespuestasPanel extends SeleccionablePanel {
 
     /**
      * Habilita/Deshabilita los componentes del panel.
-     * 
+     *
      * @param isEnabled <code>true</code> para habilitar los componentes del panel y <code>false</code> en caso
      * contrario.
      */
@@ -141,17 +169,17 @@ public class RespuestasPanel extends SeleccionablePanel {
         for (Component component : components) {
             enableComponents(component, isEnabled);
         }
-        
+
     }
 
     /**
      * Habilita/Deshabilita un componente teniendo en cuenta si tiene componentes hijos o no.
-     * 
+     *
      * @param componente componente a habilitar/deshabilitar.
      * @param isEnabled <code>true</code> para habilitar y <code>false</code> para deshabilitar.
      */
     @SuppressWarnings("null")
-    private  void enableComponents(Component componente, boolean isEnabled) {
+    private void enableComponents(Component componente, boolean isEnabled) {
         // ¿Es el componente un contenedor?
         if (componente instanceof Container) {
             // En ese caso, obtener todos los compponentes hijos
@@ -164,7 +192,7 @@ public class RespuestasPanel extends SeleccionablePanel {
         // Habilitar/Deshabilitar el componente actual
         componente.setEnabled(isEnabled);
     }
-    
+
     @Override
     public String[] getRespuestasSeleccionadas() {
         return respuestasPanel.getRespuestasSeleccionadas();
@@ -179,4 +207,6 @@ public class RespuestasPanel extends SeleccionablePanel {
     public void setRespuestas(String[] respuestas, Respuesta respuestaEnviada) {
         respuestasPanel.setRespuestas(respuestas, respuestaEnviada);
     }
+
+   
 }

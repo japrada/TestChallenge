@@ -54,9 +54,11 @@ public class Pregunta implements Serializable {
     // Valores de la opción (cuando se trata de un combo)
     private List<List<String>> valoresOpciones;
     // Desordenar opciones (por defecto, las opciones se desordenan)
-    private boolean desordenarOpcionesFlag;
+    private boolean desordenarOpcionesFlag = true;
     // Respuestas válidas de la pregunta
     private List<String> respuestas;
+    // Explicaciones de por qué la respuesta seleccionada (o seleccionadas) son correctas [campo opcional]
+    private List<String> explicacion;
     // Respuesta enviada por el cliente para la pregunta
     private Respuesta respuesta;
     // Título del borde cuando la pregunta se visualiza en un panel
@@ -75,19 +77,17 @@ public class Pregunta implements Serializable {
      *
      */
     public Pregunta() {
-        this.id = 0;
-        this.texto = "";
-        this.tipo = TipoPregunta.RESPUESTA_UNICA;
-        this.tematica = "Inglés";
-        this.nivel = Nivel.NORMAL.getNivel();
-        this.ficheroMultimedia = "";
-        this.ficheroMultimediaData = new byte[]{};
-        this.opciones = new ArrayList<>();
-        this.desordenarOpcionesFlag = false;
-        this.respuestas = new ArrayList<>();
-        this.valoresOpciones = new ArrayList<>();
+        this(0,
+                "",
+                "Inglés",
+                Nivel.NORMAL.getNivel(),
+                TipoPregunta.RESPUESTA_UNICA,
+                "",
+                new ArrayList<>(), // opciones
+                new ArrayList<>(), // valores opciones
+                new ArrayList<>());// respuestas
     }
-
+    
     /**
      * Construye un objeto <code>Pregunta</code> a partir de un texto conteniendo la definición de la pregunta en
      * formato JSON.
@@ -130,7 +130,6 @@ public class Pregunta implements Serializable {
         this.opciones = opciones;
         this.valoresOpciones = valoresOpciones;
         this.respuestas = respuestas;
-        this.desordenarOpcionesFlag = true;
     }
 
     /**
@@ -282,7 +281,7 @@ public class Pregunta implements Serializable {
     /**
      * Analiza si la extensión del fichero multimedia asociado a la pregunta es la de una imagen.
      *
-     * @return true si el fichero multimedia es una imagen y false en caso contrario.
+     * @return <code>true</code> si el fichero multimedia es una imagen y <code>false</code> en caso contrario.
      */
     public boolean isFicheroMultimediaUnaImagen() {
         return isFicheroMultimedia(EXTENSIONES_IMAGEN);
@@ -291,10 +290,32 @@ public class Pregunta implements Serializable {
     /**
      * Analiza si la extensión del fichero multimedia asociado a la pregunta es la de un audio.
      *
-     * @return true si el fichero multimedia es un audio y false en caso contrario.
+     * @return <code>true</code> si el fichero multimedia es un audio y <code>false</code> en caso contrario.
      */
     public boolean isFicheroMultimediaUnAudio() {
         return isFicheroMultimedia(EXTENSIONES_AUDIO);
+    }
+
+    /**
+     * Devuelve la explicación de la pregunta.
+     *
+     * La explicación de por qué la opción u opciones seleccionadas como respuesta a la pregunta son correctas, en el
+     * caso de que esté especificada,puede estar formada por uno o varios elementos. A efectos de obtener la explicación
+     * de la pregunta, se procesarán todos los elementos que estén en la colección.
+     *
+     * @return lista con las explicaciones a la respuestas correctas de la pregunta.
+     */
+    public List<String> getExplicacion() {
+        return explicacion;
+    }
+
+    /**
+     * Establece las explicaciones a las respuestas correctas de la pregunta.
+     *
+     * @param explicacion lista con las explicaciones a la respuestas correctas de la pregunta.
+     */
+    public void setExplicaciones(List<String> explicacion) {
+        this.explicacion = explicacion;
     }
 
     /**
@@ -537,13 +558,13 @@ public class Pregunta implements Serializable {
 
         // VALORES OPCIONES
         // ----------------
-        if (tipo.equals(TipoPregunta.RESPUESTA_MULTIVALOR) ||
-                tipo.equals(TipoPregunta.RESPUESTA_EMPAREJADA)) {
+        if (tipo.equals(TipoPregunta.RESPUESTA_MULTIVALOR)
+                || tipo.equals(TipoPregunta.RESPUESTA_EMPAREJADA)) {
 
             sb.append("\t\"valores_opciones\": [\n");
-            
-            int numeroValoresOpciones = tipo.equals(TipoPregunta.RESPUESTA_EMPAREJADA)? 1: valoresOpciones.size();
-            
+
+            int numeroValoresOpciones = tipo.equals(TipoPregunta.RESPUESTA_EMPAREJADA) ? 1 : valoresOpciones.size();
+
             for (int i = 0; i < numeroValoresOpciones; i++) {
                 List<String> valores = valoresOpciones.get(i);
                 sb.append("\t\t[");
@@ -576,15 +597,31 @@ public class Pregunta implements Serializable {
                 sb.append("\n");
             }
         }
+        sb.append("\t]");
 
-        sb.append("\t],\n");
+        // EXPLICACION
+        // -------------
+        if (explicacion != null) {
+            sb.append(",\n\t\"explicacion\": [\n");
+
+            for (int i = 0; i < explicacion.size(); i++) {
+                sb.append(String.format("\t\t \"%s\"", escaparComillaDoble(explicacion.get(i))));
+                if (i + 1 < explicacion.size()) {
+                    sb.append(",\n");
+                } else {
+                    sb.append("\n");
+                }
+            }
+            sb.append("\t]");
+        }
+        
 
         // FLAG DESORDENAR OPCIONES: sólo se añade si no es true (valor por defecto)
         if (!desordenarOpcionesFlag) {
-            sb.append(String.format("\t\"desordenar_opciones\":\"%s\"\n", desordenarOpcionesFlag));
+            sb.append(String.format(",\n\t\"desordenar_opciones\":\"%s\"", desordenarOpcionesFlag));
         }
 
-        sb.append("}\n");
+        sb.append("\n}\n");
 
         return sb.toString();
 
@@ -675,6 +712,15 @@ public class Pregunta implements Serializable {
             respuestas.add(aRespuesta.getAsString());
         }
 
+        // Explicaciones del test (el elemento es opcional)
+        JsonElement explicacionElement = gsonObj.get("explicacion");
+        if (explicacionElement != null) {
+            JsonArray explicacionArray = explicacionElement.getAsJsonArray();
+            explicacion = new ArrayList<>();
+            for (JsonElement aExplicacion : explicacionArray) {
+                explicacion.add(aExplicacion.getAsString());
+            }
+        }
     }
 
     /**

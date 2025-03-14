@@ -101,6 +101,10 @@ public class TestServer extends Thread {
     private Boolean isPaused;
     // Flag que indica que el test ha sido terminado por el TestChallengeServer (no hay que actualizar el ranking)
     private Boolean isTerminatedByServer;
+    // Fecha y hora en la que el se inicia el test
+    private Date startDate;
+    // Fecha y hora en la que finaliza el test
+    private Date endDate;
 
     // Logger de la clase
     private final static Logger logger = Logger.getLogger(TestServer.class.getName());
@@ -154,15 +158,21 @@ public class TestServer extends Thread {
                 enviarMensaje(new Mensaje("[•] El test comienza ¡YA!. ¡Buena suerte!\n"));
                 // Ejecutar el test: enviar las preguntas a todos los clientes conectados
                 enviarPreguntas();
-                // Notificar que el test ha finalizado y
+                // Registrar la fecha y hora en la que el test ha finalizado porque se han enviado todas las preguntas
+                endDate = new Date();
                 enviarMensaje(new Mensaje(String.format("\n[•] El test ha finalizado a las %s.",
-                        new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()))));
+                        new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(endDate))));
+                
                 // actualizar el ranking con los resultados finales.
                 if (!isTerminatedByServer) {
-                    actualizarRanking();
+                    logger.info(String.format("Resultados del test [%s]:", resultados));
+                    Ranking rankingActualizado = actualizarRanking();
+                    enviarMensaje(new Mensaje(String.format("\n[•] Resultados del test: %s", resultados)));
+                    enviarMensaje(new Mensaje(rankingActualizado, TipoMensaje.TEST_PARAR));
                 }
             } else {
-                // No se han encontrado preguntas para los criterios seleccionados. El test no se ejecutará
+                logger.info("No se han encontrado preguntas para los criterios especificados.");
+                // No se han encontrado preguntas para los criterios seleccionados. El test no se ejecuta y no hay ranking que enviar
                 enviarMensaje(new Mensaje(null, TipoMensaje.TEST_PARAR));
             }
 
@@ -175,29 +185,17 @@ public class TestServer extends Thread {
     }
 
     /**
-     * Método helper que actualiza el ranking y lo envía a los clientes.
-     *
-     * @throws IOException excepción al enviar el mensaje por el canal de escritura.
-     */
-    private void actualizarRanking() throws IOException {
-        logger.info(String.format("Resultados del test [%s]:", resultados));
-
-        enviarMensaje(new Mensaje(String.format("\n[•] Resultados del test: %s", resultados)));
-
-        enviarMensaje(new Mensaje(getRankingActualizado(), TipoMensaje.TEST_PARAR));
-    }
-
-    /**
      * Método helper que construye el mensaje que notifica a los clientes conectados que se va a realizar un test.
      *
      * @return mensaje que notifica a los clientes conectados que se va a realizar un test.
      */
     public String getMensajeInicioTest() {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
+        // Registrar la fecha y hora a la que arranca el test
+        startDate = new Date();
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("\n ------> Test solicitado por el usuario @%s a las %s.",
-                nickname, sdf.format(new Date())));
+                nickname, sdf.format(startDate)));
         sb.append(String.format("\n[•] [Temática = %s, Nivel = %s, Tipo = %s, Nº preguntas = %d, Tiempo límite = %d segundos].",
                 tematica, nivel, Arrays.toString(tipoPreguntas), numeroPreguntas, tiempoLimite));
         return sb.toString();
@@ -254,11 +252,22 @@ public class TestServer extends Thread {
             }
 
         } else {
-            // Respuesta incorrecta
-            puntuaciones.put(nickname, Puntuacion.INCORRECTA);
-            enviarMensaje(new Mensaje(TipoMensaje.PREGUNTA_NO_CONTESTADA_CORRECTAMENTE), nickname);
-            enviarMensaje(new Mensaje(
-                    String.format("\n'%s' no ha contestado correctamente :-(", nickname)));
+            // Respuesta no respondida o incorrecta
+            if (respuestaRecibida.isEmpty() || respuestaRecibida.isRespuestaPorDefecto()) {
+                // La respuesta se ha enviado pero no se han seleccionado opciones o se ha seleccionado la opción
+                // por defecto en todas las respuestas de una pregunta de tipo "Emparejada" o "Multivalor".
+                puntuaciones.put(nickname, Puntuacion.NO_RESPONDIDA);
+                enviarMensaje(new Mensaje(TipoMensaje.PREGUNTA_NO_RESPONDIDA), nickname);
+                enviarMensaje(new Mensaje(
+                        String.format("\n'%s' no ha respondido la pregunta :-(", nickname)));
+            } else {
+                // La respuesta se ha enviado, pero las opciones seleccionadas son incorrectas
+                puntuaciones.put(nickname, Puntuacion.INCORRECTA);
+                enviarMensaje(new Mensaje(TipoMensaje.PREGUNTA_NO_CONTESTADA_CORRECTAMENTE), nickname);
+                enviarMensaje(new Mensaje(
+                        String.format("\n'%s' no ha contestado correctamente :-(", nickname)));
+            }
+
         }
 
         // Si todos los usuarios conectados han enviado su respuesta, interrumpimos la cuenta atrás
@@ -359,7 +368,7 @@ public class TestServer extends Thread {
 
     /**
      * Incializa la puntuación de la pregunta en curso de un usuario incorporado a un test iniciado.
-     * 
+     *
      * @param nickname nickname del usuario incorporado a un test iniciado.
      */
     public synchronized void inicializarPuntuacionConTestIniciado(String nickname) {
@@ -478,7 +487,7 @@ public class TestServer extends Thread {
             File multimediaFile = new File(ficheroMultimediaConRutaCompleta);
             fis = new FileInputStream(multimediaFile);
             byte[] byteArray = fis.readAllBytes();
-            
+
             // Si el el archivo multimedia es un .mp3, obtenemos la duración en segundos
             if (pregunta.isFicheroMultimediaUnAudio()) {
                 AudioFile audioFile = AudioFileIO.read(multimediaFile);
@@ -591,7 +600,8 @@ public class TestServer extends Thread {
         } catch (InterruptedException ie) {
             // Si un usuario ha detenido el test ...
             logger.info(ie.getMessage());
-
+            // Registrar la fecha y hora de finalización (en este caso, porque el test ha sido detenido por un usuario);
+            endDate = new Date();
             // Se actualizan los resultados a partir de los puntos obtenidos en la última pregunta  
             // teniendo encuenta, además, la penalización que se le aplica al usuario que ha detenido el test.
             Integer penalizacion = (preguntasSeleccionadas.size() - i + 1);
@@ -825,7 +835,7 @@ public class TestServer extends Thread {
     /**
      * Método helper que actualiza el ranking con los resultados obtenidos al finalizar el test.
      */
-    private Ranking getRankingActualizado() throws IOException {
+    private Ranking actualizarRanking() throws IOException {
         Map<String, Integer> ranking = testChallengeServer.getRanking();
 
         for (String nicknameKey : resultados.keySet()) {
@@ -846,7 +856,12 @@ public class TestServer extends Thread {
         }
 
         // Envía una copia del ranking actualizado almacenado en el servidor
-        return new Ranking(new HashMap<>(ranking));
+        Ranking rankingActualizado = new Ranking(new HashMap<>(ranking));
+        // Establecemos la información de la fecha de inicio y de fin del test como parte de la información del ranking
+        rankingActualizado.setStartDate(startDate);
+        rankingActualizado.setEndDate(endDate);
+        // Ranking actualizado
+        return rankingActualizado;
     }
 
     /**

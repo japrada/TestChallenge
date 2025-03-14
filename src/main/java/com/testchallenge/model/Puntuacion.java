@@ -29,11 +29,15 @@ public enum Puntuacion implements Serializable {
     CORRECTA_Y_PRIMERA(2),
     CORRECTA(1),
     INCORRECTA (0),
+    NO_RESPONDIDA(0),
     NO_CONTESTADA(-1);
     
     public static final String CORRECTA_Y_PRIMERA_MENSAJE = "Respuesta correcta y primero en acertar, 2 puntos :-)";
     public static final String CORRECTA_MENSAJE = "Respuesta correcta, 1 punto :-)";
     public static final String INCORRECTA_MENSAJE = "Respuesta incorrecta, 0 puntos :-(";
+    // Una pregunta no respondida es aquella que se envía sin haber especificado una respuesta
+    public static final String NO_RESPONDIDA_MENSAJE = "Pregunta no respondida, 0 puntos :-(";
+    // Una pregunta no contestada es aquella que no se ha enviado antes del vencimiento de la cuenta atrás
     public static final String NO_CONTESTADA_MENSAJE = "Respuesta no enviada, -1 puntos :-(";
     
     // Tipo del mensaje
