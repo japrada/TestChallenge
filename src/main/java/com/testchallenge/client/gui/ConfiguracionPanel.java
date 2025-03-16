@@ -26,6 +26,7 @@ import com.testchallenge.model.Pregunta;
 import com.testchallenge.model.TipoMensaje;
 import com.testchallenge.model.TipoPregunta;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -97,6 +98,9 @@ public class ConfiguracionPanel extends ConectablePanel {
         JLabel tematicaLabel = new JLabel("Temática");
         add(tematicaLabel);
         tematicaComboBox = new JComboBox<>(new String[]{});
+        // Limitamos la anchura del componente que muestra las temáticas para ajustar la interfaz si el texto de la 
+        // temática supera el tamaño establecido.
+        tematicaComboBox.setPreferredSize(new Dimension(120,25));
         add(tematicaComboBox);
 
         // "Nivel"
