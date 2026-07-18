@@ -12,5 +12,5 @@ RUN groupadd --system testchallenge \
 EXPOSE 5000
 USER testchallenge
 ENTRYPOINT ["java", "-jar", "TestChallengeServer.jar"]
-CMD ["5000", "/app/preguntas"]
+CMD ["5001", "/app/preguntas"]
 
