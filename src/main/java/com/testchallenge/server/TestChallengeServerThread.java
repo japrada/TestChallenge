@@ -29,6 +29,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -69,6 +72,10 @@ public final class TestChallengeServerThread extends Thread {
     private final static Logger logger = Logger.getLogger(TestChallengeServerThread.class.getName());
     // Directorio en el que se almacenan los archivos multimedia de una temática
     private final static String CARPETA_ARCHIVOS_MULTIMEDIA = "/Multimedia/";
+    private final static Object CREAR_PREGUNTA_LOCK = new Object();
+    private final static int MAX_TEXTO_MENSAJE_LENGTH = 4_000;
+    private final static long MAX_MULTIMEDIA_BYTES = 5L * 1024L * 1024L;
+    private final static String[] EXTENSIONES_MULTIMEDIA_PERMITIDAS = new String[]{"gif", "jpeg", "jpg", "mp3", "png"};
 
     /**
      * Construye el hilo de servicio para el usuario cuyo nickname se especifica.
@@ -121,7 +128,7 @@ public final class TestChallengeServerThread extends Thread {
      *
      * @param clientDataIn Stream por el que se leen los datos enviados por el cliente
      */
-    public void setClientDataIn(ObjectInputStream clientDataIn) {
+    public void setClientDataIn(ObjectInputStream clientDataIn) { //Aplicamos el filtro de serialización para evitar ataques de deserialización remota.
         this.clientDataIn = clientDataIn;
     }
 
@@ -184,6 +191,11 @@ public final class TestChallengeServerThread extends Thread {
                 
                 if (mensaje != null) {
                     TipoMensaje tipoMensaje = mensaje.getTipo();
+                    if (tipoMensaje == null) {
+                        logger.warning(String.format("Mensaje sin tipo recibido de '%s'.", nickname));
+                        continue;
+                    }
+
                     // Analizar si el mensaje contiene la expresión regular @<nickname> de uno o más usuarios. Si el nickname
                     // se corresponde con alguno de los usuarios conectados, se lo envía sólo a ese usuario.
                     if (!tipoMensaje.equals(TipoMensaje.BYE)) {
@@ -201,7 +213,9 @@ public final class TestChallengeServerThread extends Thread {
                                 // Se recibe la respuesta enviada por el usuario
                                 Respuesta respuesta = mensaje.getRespuesta();
                                 // y se almacena en la lista de respuestas enviadas
-                                testChallengeServer.getTestServer().recibirRespuesta(nickname, respuesta);
+                                if (testChallengeServer.getTestServer() != null && respuesta != null) {
+                                    testChallengeServer.getTestServer().recibirRespuesta(nickname, respuesta);
+                                }
                                 break;
                             case PREGUNTA_ENVIAR:
                                 // Se recibe la petición de crear un fichero con la pregunta en el lado del servidor
@@ -210,43 +224,57 @@ public final class TestChallengeServerThread extends Thread {
                             case AMPLIAR_TIEMPO_RESPUESTA:
                                 String numeroSegundos = mensaje.getTexto();
                                 // El cliente solicita ampliar el tiempo de respuesta en el número de segundos indicado
-                                testChallengeServer.getTestServer().ampliarTiempoRespuesta(numeroSegundos);
-                                // Se envía un mensaje a todos los usuarios de la solicitud (incluyendo el usuario que la ha originado)
-                                enviarMensaje(
-                                        String.format(
-                                                "El usuario @%s ha solicitado ampliar el tiempo de respuesta en %s segundos.",
-                                                nickname, numeroSegundos));
+                                if (testChallengeServer.getTestServer() != null && esNumeroSegundosValido(numeroSegundos)) {
+                                    testChallengeServer.getTestServer().ampliarTiempoRespuesta(numeroSegundos);
+                                    // Se envía un mensaje a todos los usuarios de la solicitud (incluyendo el usuario que la ha originado)
+                                    enviarMensaje(
+                                            String.format(
+                                                    "El usuario @%s ha solicitado ampliar el tiempo de respuesta en %s segundos.",
+                                                    nickname, numeroSegundos));
+                                }
                                 break;
                             case DETENER_TEST:
-                                testChallengeServer.getTestServer().stopTest(nickname);
-                                enviarMensaje(
-                                        String.format(
-                                                "El usuario @%s ha solicitado detener el test.",
-                                                nickname));
+                                if (testChallengeServer.getTestServer() != null) {
+                                    testChallengeServer.getTestServer().stopTest(nickname);
+                                    enviarMensaje(
+                                            String.format(
+                                                    "El usuario @%s ha solicitado detener el test.",
+                                                    nickname));
+                                }
                                 break;
                             case PAUSAR_TEST:
-                                testChallengeServer.getTestServer().pauseTest(nickname);
-                                enviarMensaje(
-                                        String.format(
-                                                "El usuario @%s ha solicitado pausar el test.",
-                                                nickname));
+                                if (testChallengeServer.getTestServer() != null) {
+                                    testChallengeServer.getTestServer().pauseTest(nickname);
+                                    enviarMensaje(
+                                            String.format(
+                                                    "El usuario @%s ha solicitado pausar el test.",
+                                                    nickname));
+                                }
                                 break;
                             case REANUDAR_TEST:
-                                testChallengeServer.getTestServer().resumeTest(nickname);
-                                enviarMensaje(
-                                        String.format(
-                                                "El usuario @%s ha solicitado reanudar el test.",
-                                                nickname));
+                                if (testChallengeServer.getTestServer() != null) {
+                                    testChallengeServer.getTestServer().resumeTest(nickname);
+                                    enviarMensaje(
+                                            String.format(
+                                                    "El usuario @%s ha solicitado reanudar el test.",
+                                                    nickname));
+                                }
+                                break;
+                            case TEXTO:
+                                String texto = mensaje.getTexto();
+                                if (esTextoValido(texto)) {
+                                    reenviarMensaje(texto);
+                                }
+                                break;
                             default:
-                                // El cliente envía un mensaje de texto que se debe mostrar en el chat
-                                reenviarMensaje(mensaje.getTexto());
+                                logger.warning(String.format("Tipo de mensaje no permitido desde '%s': %s", nickname, tipoMensaje));
                                 break;
                         }
                     }
                 }
-            } while (!(mensaje == null || mensaje.getTipo().equals(TipoMensaje.BYE)));
+            } while (!(mensaje == null || mensaje.getTipo() == TipoMensaje.BYE));
             
-        } catch (IOException | ClassNotFoundException ex) {
+        } catch (IOException | ClassNotFoundException | ClassCastException | IllegalArgumentException | NullPointerException ex) {
             if (!(ex instanceof EOFException)) {
                 // Analizar si la excepción no es de tipo EOFException: este tipo de excepción se levanta
                 // cuanto un cliente se desconecta del servidor
@@ -301,6 +329,10 @@ public final class TestChallengeServerThread extends Thread {
      * @throws IOException excepción generada al enviar el mensaje por el canal de escritura
      */
     private void reenviarMensaje(String mensaje) throws IOException {
+        if (!esTextoValido(mensaje)) {
+            logger.warning(String.format("Mensaje de texto no válido recibido de '%s'.", nickname));
+            return;
+        }
         logger.info(String.format("Reenvío del mensaje '%s'.\n", mensaje));
         Set<String> nicknames = getNicknames(mensaje);
         String chatMessage = String.format("@%s:%s", nickname, mensaje);
@@ -352,6 +384,21 @@ public final class TestChallengeServerThread extends Thread {
         }
     }
 
+    /*
+    Método nuevo añadido para centralizar el envío de mensajes por un único método. 
+    Esto es porque en el metodo enviarMensaje en TestServer, también se realiza lo siguiente:
+                    cst.getClientDataOut().writeObject(mensaje);
+                cst.getClientDataOut().flush();
+
+        Y podía darse el problema de que varios hilos intenten escribir al mismo tiempo en el mismo stream de salida del socket de datos.
+        Con esto, sabemos que el envío de mensajes se hace de forma sincronizada y no habrá problemas de concurrencia.
+        ya que pasa por el método send que es synchronized.
+    */
+    synchronized void send(Mensaje mensaje) throws IOException {
+        clientDataOut.writeObject(mensaje);
+        clientDataOut.flush();
+    }
+
     /**
      * Método helper para enviar un mensaje al cliente conectado a través del stream de escritura del socket de datos.
      *
@@ -360,8 +407,7 @@ public final class TestChallengeServerThread extends Thread {
      * @throws IOException excepción generada al enviar el mensaje por el canal de escritura
      */
     private void enviarMensaje(TestChallengeServerThread cst, String mensaje) throws IOException {
-        cst.getClientDataOut().writeObject(new Mensaje(mensaje));
-        cst.getClientDataOut().flush();
+        cst.send(new Mensaje(mensaje));
     }
 
     /**
@@ -398,51 +444,116 @@ public final class TestChallengeServerThread extends Thread {
      * @param pregunta la nueva pregunta que se va a crear.
      * @throws IOException excepción generada si hubo algún problema en la creación del fichero.
      */
-    private synchronized void crearPregunta(Pregunta pregunta) throws IOException {
-        
-        String rutaBase = testChallengeServer.getDirectorioRaizPreguntas();
-        String rutaCompleta = rutaBase;
-        
-        if (!rutaBase.endsWith("/")) {
-            rutaCompleta = rutaCompleta.concat("/").concat(pregunta.getTematica());
-        } else {
-            rutaCompleta = rutaCompleta.concat(pregunta.getTematica());
-        }
-        
-        File directorio = new File(rutaCompleta);
-        
-        FilenameFilter filter = (File f, String name1) -> name1.startsWith("0");
-        String[] ficheros = directorio.list(filter);
-        
-        Integer orden = 1;
-        if (ficheros.length > 0) {
-            List<String> listFile = Arrays.asList(ficheros);
-            Collections.sort(listFile, Collections.reverseOrder());
-            String nombreFichero = listFile.get(0);
-            orden = Integer.parseInt(nombreFichero.substring(0, nombreFichero.indexOf("."))) + 1;
-        }
-        
-        pregunta.setId(orden);
-        
-        String nuevaPregunta = String.format("%05d.json", orden);
-        // Crear la nueva pregunta
-        File preguntaFile = new File(rutaCompleta, nuevaPregunta);
-        
-        FileUtils.write(preguntaFile, pregunta.toString(), StandardCharsets.UTF_8.name());
-
-        // Si la pregunta tiene asociada un fichero multimedia, lo creamos también.
-        if (!pregunta.getFicheroMultimedia().isEmpty()) {
-            String ficheroMultimediaNombre = pregunta.getFicheroMultimedia();
-            
-            File ficheroMultimediaFile = new File(rutaCompleta.concat(CARPETA_ARCHIVOS_MULTIMEDIA), ficheroMultimediaNombre);
-            byte[] ficheroMultimediaData = pregunta.getFicheroMultimediaData();
-            
-            FileUtils.writeByteArrayToFile(ficheroMultimediaFile, ficheroMultimediaData);
+    private void crearPregunta(Pregunta pregunta) throws IOException {
+        if (pregunta == null) {
+            throw new IOException("Pregunta no válida.");
         }
 
-        // Enviar un mensaje a todos los usuarios (incluído el que sube la pregunta)
-        enviarMensaje(String.format("------> El usuario @%s ha subido una nueva pregunta de tipo '%s'.\n",
-                nickname, pregunta.getTipo().getTipo()));
+        synchronized (CREAR_PREGUNTA_LOCK) {
+            // Se obtiene la ruta base de las preguntas y se valida que la temática de la pregunta es válida. 
+            //Usamos Path.normalize() para evitar posibles ataques de path traversal.
+            Path directorioBase = Paths.get(testChallengeServer.getDirectorioRaizPreguntas()).toAbsolutePath().normalize();
+            if (pregunta.getTematica() == null || pregunta.getTematica().isBlank()) {
+                throw new IOException("Temática no válida.");
+            }
+
+            Path directorioTematica = directorioBase.resolve(pregunta.getTematica()).normalize();
+            if (!directorioTematica.startsWith(directorioBase) || !Files.isDirectory(directorioTematica)) {
+                throw new IOException("Temática no válida: " + pregunta.getTematica());
+            }
+
+            File directorio = directorioTematica.toFile();
+
+            FilenameFilter filter = (File f, String name1) -> name1.matches("\\d{5}\\.json");
+            String[] ficheros = directorio.list(filter);
+            if (ficheros == null) {
+                throw new IOException("No se puede listar el directorio de preguntas: " + directorioTematica);
+            }
+
+            Integer orden = 1;
+            if (ficheros.length > 0) {
+                List<String> listFile = Arrays.asList(ficheros);
+                Collections.sort(listFile, Collections.reverseOrder());
+                String nombreFichero = listFile.get(0);
+                orden = Integer.parseInt(nombreFichero.substring(0, nombreFichero.indexOf("."))) + 1;
+            }
+
+            pregunta.setId(orden);
+
+            String nuevaPregunta = String.format("%05d.json", orden);
+            // Crear la nueva pregunta
+            Path preguntaFile = directorioTematica.resolve(nuevaPregunta).normalize();
+            if (!preguntaFile.startsWith(directorioTematica)) {
+                throw new IOException("Ruta de pregunta no válida: " + nuevaPregunta);
+            }
+
+            FileUtils.write(preguntaFile.toFile(), pregunta.toString(), StandardCharsets.UTF_8.name());
+
+            // Si la pregunta tiene asociada un fichero multimedia, lo creamos también.
+            if (pregunta.getFicheroMultimedia() != null && !pregunta.getFicheroMultimedia().isEmpty()) {
+                String ficheroMultimediaNombre = validarNombreMultimedia(pregunta.getFicheroMultimedia());
+                byte[] ficheroMultimediaData = pregunta.getFicheroMultimediaData();
+                if (ficheroMultimediaData == null || ficheroMultimediaData.length > MAX_MULTIMEDIA_BYTES) {
+                    throw new IOException("Tamaño de fichero multimedia no válido.");
+                }
+
+                Path directorioMultimedia = directorioTematica.resolve(CARPETA_ARCHIVOS_MULTIMEDIA.substring(1)).normalize();
+                if (!directorioMultimedia.startsWith(directorioTematica)) {
+                    throw new IOException("Ruta multimedia no válida.");
+                }
+                Files.createDirectories(directorioMultimedia);
+
+                Path ficheroMultimediaFile = directorioMultimedia.resolve(ficheroMultimediaNombre).normalize();
+                if (!ficheroMultimediaFile.startsWith(directorioMultimedia)) {
+                    throw new IOException("Nombre de fichero multimedia no válido: " + ficheroMultimediaNombre);
+                }
+
+                FileUtils.writeByteArrayToFile(ficheroMultimediaFile.toFile(), ficheroMultimediaData);
+            }
+
+            // Enviar un mensaje a todos los usuarios (incluído el que sube la pregunta)
+            enviarMensaje(String.format("------> El usuario @%s ha subido una nueva pregunta de tipo '%s'.\n",
+                    nickname, pregunta.getTipo().getTipo()));
+        }
+    }
+
+    private String validarNombreMultimedia(String nombre) throws IOException {
+        //Realizamos varias validaciones para asegurarnos de que el nombre del fichero multimedia es seguro y válido.
+        if (nombre == null || nombre.isBlank() || nombre.contains("/") || nombre.contains("\\")
+                || nombre.chars().anyMatch(Character::isISOControl)) {
+            throw new IOException("Nombre de fichero multimedia no válido: " + nombre);
+        }
+
+        Path nombrePath = Paths.get(nombre);
+        if (nombrePath.isAbsolute() || nombrePath.getNameCount() != 1) {
+            throw new IOException("Nombre de fichero multimedia no válido: " + nombre);
+        }
+
+        int posicion = nombre.lastIndexOf('.');
+        if (posicion <= 0 || posicion == nombre.length() - 1) {
+            throw new IOException("Fichero multimedia sin extensión válida: " + nombre);
+        }
+
+        String extension = nombre.substring(posicion + 1).toLowerCase();
+        if (!Arrays.asList(EXTENSIONES_MULTIMEDIA_PERMITIDAS).contains(extension)) {
+            throw new IOException("Extensión multimedia no permitida: " + extension);
+        }
+
+        return nombre;
+    }
+
+    private boolean esTextoValido(String texto) {
+        return texto != null
+                && texto.length() <= MAX_TEXTO_MENSAJE_LENGTH
+                && texto.chars().noneMatch(ch -> Character.isISOControl(ch) && ch != '\n' && ch != '\r' && ch != '\t');
+    }
+
+    private boolean esNumeroSegundosValido(String numeroSegundos) {
+        if (numeroSegundos == null || !numeroSegundos.matches("\\d{1,3}")) {
+            return false;
+        }
+        int segundos = Integer.parseInt(numeroSegundos);
+        return segundos > 0 && segundos <= 300;
     }
     
 }

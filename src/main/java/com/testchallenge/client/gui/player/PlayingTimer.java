@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.TimeZone;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
 
 /**
  * Muestra el tiempo de reproducción el audio.
@@ -40,8 +41,8 @@ public class PlayingTimer extends Thread {
     private final DateFormat dateFormater = new SimpleDateFormat("HH:mm:ss");
     private final int TIME_TO_SLEEP = 1_000;
 
-    private boolean isRunning = false;
-    private boolean isPaused = false;
+    private volatile boolean isRunning = false;
+    private volatile boolean isPaused = false;
 
     private long startTime;
 
@@ -72,17 +73,22 @@ public class PlayingTimer extends Thread {
             try {
                 Thread.sleep(TIME_TO_SLEEP);
                 if (!isPaused) {
-                    labelRecordTime.setText(toTimeString());
+                    String timeString = toTimeString();
                     int currentSecond = (int) runningTime / TIME_TO_SLEEP;
-                    slider.setValue(currentSecond);
+                    SwingUtilities.invokeLater(() -> {
+                        labelRecordTime.setText(timeString);
+                        slider.setValue(currentSecond);
+                    });
 
                     runningTime += TIME_TO_SLEEP;
                 } else {
                     pausingTime += TIME_TO_SLEEP;
                 }
             } catch (InterruptedException ex) {
-                slider.setValue(0);
-                labelRecordTime.setText("00:00:00");
+                SwingUtilities.invokeLater(() -> {
+                    slider.setValue(0);
+                    labelRecordTime.setText("00:00:00");
+                });
                 isRunning = false;
                 isPaused = false;
                 break;

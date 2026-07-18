@@ -586,46 +586,48 @@ public class PreguntasPanel extends ConectablePanel {
      * <code>enviarRespuestaButton</code>.
      */
     private void enviarRespuestaButtonSwingWorker() {
+        if (!enviarRespuestaButton.getText().equals("Enviar respuesta")) {
+            // Reactivar la funcionalidad "Enviar respuesta" y, además, habilitar los botones de navegación
+            enviarRespuestaButton.setText("Enviar respuesta");
+            // NOTA: el botón no se puede volver a seleccionar
+            enviarRespuestaButton.setEnabled(false);
+            // Empezamos paginando en la pregunta "0" (el primer elemento de la lista)
+            preguntaIndex = 0;
+            cargarPregunta(preguntaIndex);
+            return;
+        }
+
+        if (respuestasPanel.getRespuestasSeleccionadas() == null) {
+            return;
+        }
+
+        Respuesta respuesta = new Respuesta(
+                respuestasPanel.getRespuestasSeleccionadas(),
+                respuestasPanel.getTipoPregunta(),
+                orden);
+        pregunta.setRespuesta(respuesta);
+
         SwingWorker sw = new SwingWorker() {
             @Override
             protected String doInBackground() throws Exception {
-                if (enviarRespuestaButton.getText().equals("Enviar respuesta")) {
-
-                    if (respuestasPanel.getRespuestasSeleccionadas() != null) {
-                        Respuesta respuesta = new Respuesta(
-                                respuestasPanel.getRespuestasSeleccionadas(),
-                                respuestasPanel.getTipoPregunta(),
-                                orden);
-                        //if (respuesta.esValida()) {
-                            // *********  Enviar la respuesta al servidor *********
-                            pregunta.setRespuesta(respuesta);
-                            out.writeObject(new Mensaje(respuesta, TipoMensaje.RESPUESTA_ENVIAR));
-                            out.flush();
-                            // *************************************************
-                            // Sólo se deja enviar la respuesta una vez
-                            enviarRespuestaButton.setEnabled(false);
-                            // Inhabilita las opciones de la pregunta
-                            respuestasPanel.setEnabled(false);
-                            // El panel que permite ampliar los segundos se desactiva al enviar la respuesta
-                            setAmpliarSegundosPanelEnabled(false);
-                            // El botón de Pausar/Reanudar se desactiva al enviar la respuesta
-                            setPauseResumeButtonEnabled(false);
-                            // El botón de Stop test se desactiva al enviar la respuesta.
-                            setStopButtonEnabled(false);
-                        //} else {
-                            //JOptionPane.showMessageDialog(parent, "La respuesta no puede ser vacía.");
-                        //}
-                    }
-                } else {
-                    // Reactivar la funcionalidad "Enviar respuesta" y, además, habilitar los botones de navegación
-                    enviarRespuestaButton.setText("Enviar respuesta");
-                    // NOTA: el botón no se puede volver a seleccionar
-                    enviarRespuestaButton.setEnabled(false);
-                    // Empezamos paginando en la pregunta "0" (el primer elemento de la lista)
-                    preguntaIndex = 0;
-                    cargarPregunta(preguntaIndex);
-                }
+                // *********  Enviar la respuesta al servidor *********
+                enviarMensaje(new Mensaje(respuesta, TipoMensaje.RESPUESTA_ENVIAR));
+                // *************************************************
                 return "Ejecución completada.";
+            }
+
+            @Override
+            protected void done() {
+                // Sólo se deja enviar la respuesta una vez
+                enviarRespuestaButton.setEnabled(false);
+                // Inhabilita las opciones de la pregunta
+                respuestasPanel.setEnabled(false);
+                // El panel que permite ampliar los segundos se desactiva al enviar la respuesta
+                setAmpliarSegundosPanelEnabled(false);
+                // El botón de Pausar/Reanudar se desactiva al enviar la respuesta
+                setPauseResumeButtonEnabled(false);
+                // El botón de Stop test se desactiva al enviar la respuesta.
+                setStopButtonEnabled(false);
             }
         };
         // El SwingWorker se ejecuta en un thread distinto del hilo principal
@@ -637,16 +639,8 @@ public class PreguntasPanel extends ConectablePanel {
      * <code>preguntaAnteriorButton</code>.
      */
     private void preguntaAnteriorButtonSwingWorker() {
-        SwingWorker sw = new SwingWorker() {
-            @Override
-            protected String doInBackground() throws Exception {
-                preguntaIndex = preguntaIndex - 1;
-                cargarPregunta(preguntaIndex);
-                return "Ejecución completada.";
-            }
-        };
-        // El SwingWorker se ejecuta en un thread distinto del hilo principal
-        sw.execute();
+        preguntaIndex = preguntaIndex - 1;
+        cargarPregunta(preguntaIndex);
     }
 
     /**
@@ -654,35 +648,26 @@ public class PreguntasPanel extends ConectablePanel {
      * <code>preguntaSiguienteButton</code>.
      */
     private void preguntaSiguienteButtonSwingWorker() {
-        SwingWorker sw = new SwingWorker() {
-            @Override
-            protected String doInBackground() throws Exception {
-                preguntaIndex = preguntaIndex + 1;
-                cargarPregunta(preguntaIndex);
-                return "Ejecución completada.";
-            }
-        };
-        // El SwingWorker se ejecuta en un thread distinto del hilo principal
-        sw.execute();
+        preguntaIndex = preguntaIndex + 1;
+        cargarPregunta(preguntaIndex);
     }
 
     /**
      * Método helper que gestiona en un Thread independiente los eventos generados por el botón <code>stopButton</code>.
      */
     private void stopButtonSwingWorker() {
+        int option = JOptionPane.showConfirmDialog(parent,
+                "¿Desea realmente detener el test? \n Se sumarán puntos negativos por las preguntas canceladas si acepta esta operación.",
+                "Confirmar detener test", JOptionPane.OK_CANCEL_OPTION);
+
+        if (option != JOptionPane.OK_OPTION) {
+            return;
+        }
+
         SwingWorker sw = new SwingWorker() {
             @Override
             protected String doInBackground() throws Exception {
-                int option = JOptionPane.showConfirmDialog(parent,
-                        "¿Desea realmente detener el test? \n Se sumarán puntos negativos por las preguntas canceladas si acepta esta operación.",
-                        "Confirmar detener test", JOptionPane.OK_CANCEL_OPTION);
-
-                // Comprobar la opción seleccionada por el usuario
-                if (option == JOptionPane.OK_OPTION) {
-                    out.writeObject(new Mensaje(TipoMensaje.DETENER_TEST));
-                    out.flush();
-                }
-
+                enviarMensaje(new Mensaje(TipoMensaje.DETENER_TEST));
                 return "Ejecución completada.";
             }
         };
@@ -695,39 +680,49 @@ public class PreguntasPanel extends ConectablePanel {
      * <code>pauseResumeButton</code>.
      */
     private void pauseResumeButtonSwingWorker() {
+        String buttonActionCommand = pauseResumeButton.getActionCommand();
+        TipoMensaje tipoMensaje = null;
+
+        if (buttonActionCommand.equals(PAUSE_ACTION_COMMAND)) {
+            int option = JOptionPane.showConfirmDialog(parent,
+                    "¿Desea realmente pausar la ejecución del test?",
+                    "Confirmar pausar test", JOptionPane.OK_CANCEL_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+                tipoMensaje = TipoMensaje.PAUSAR_TEST;
+            }
+        } else if (buttonActionCommand.equals(RESUME_ACTION_COMMAND)) {
+            int option = JOptionPane.showConfirmDialog(parent,
+                    "¿Desea realmente reanudar la ejecución del test?",
+                    "Confirmar reanudar test", JOptionPane.OK_CANCEL_OPTION);
+
+            if (option == JOptionPane.OK_OPTION) {
+                tipoMensaje = TipoMensaje.REANUDAR_TEST;
+            }
+        }
+
+        if (tipoMensaje == null) {
+            return;
+        }
+
+        TipoMensaje tipoMensajeEnviar = tipoMensaje;
         SwingWorker sw = new SwingWorker() {
             @Override
             protected String doInBackground() throws Exception {
-                String buttonActionCommand = pauseResumeButton.getActionCommand();
-                if (buttonActionCommand.equals(PAUSE_ACTION_COMMAND)) {
-                    int option = JOptionPane.showConfirmDialog(parent,
-                            "¿Desea realmente pausar la ejecución del test?",
-                            "Confirmar pausar test", JOptionPane.OK_CANCEL_OPTION);
-
-                    // Comprobar la opción seleccionada por el usuario
-                    if (option == JOptionPane.OK_OPTION) {
-                        // Enviar mensaje al servidor
-                        out.writeObject(new Mensaje(TipoMensaje.PAUSAR_TEST));
-                        out.flush();
-                        // Actualizar la UI: Poner el icono del Play
-                        setResumeButtonEnabled();
-                    }
-                } else if (buttonActionCommand.equals(RESUME_ACTION_COMMAND)) {
-                    int option = JOptionPane.showConfirmDialog(parent,
-                            "¿Desea realmente reanudar la ejecución del test?",
-                            "Confirmar reanudar test", JOptionPane.OK_CANCEL_OPTION);
-
-                    // Comprobar la opción seleccionada por el usuario
-                    if (option == JOptionPane.OK_OPTION) {
-                        // Enviar mensaje al servidor
-                        out.writeObject(new Mensaje(TipoMensaje.REANUDAR_TEST));
-                        out.flush();
-
-                        //  Actualizar la UI: Poner el icono del Pause
-                        setPauseButtonEnabled();
-                    }
-                }
+                // Enviar mensaje al servidor
+                enviarMensaje(new Mensaje(tipoMensajeEnviar));
                 return "Ejecución completada.";
+            }
+
+            @Override
+            protected void done() {
+                if (tipoMensajeEnviar.equals(TipoMensaje.PAUSAR_TEST)) {
+                    // Actualizar la UI: Poner el icono del Play
+                    setResumeButtonEnabled();
+                } else if (tipoMensajeEnviar.equals(TipoMensaje.REANUDAR_TEST)) {
+                    //  Actualizar la UI: Poner el icono del Pause
+                    setPauseButtonEnabled();
+                }
             }
         };
         // El SwingWorker se ejecuta en un thread distinto del hilo principal
@@ -789,8 +784,7 @@ public class PreguntasPanel extends ConectablePanel {
         sw = new SwingWorker() {
             @Override
             protected String doInBackground() throws Exception {
-                out.writeObject(new Mensaje(ampliarSegundosComboBox.getSelectedItem(), TipoMensaje.AMPLIAR_TIEMPO_RESPUESTA));
-                out.flush();
+                enviarMensaje(new Mensaje(ampliarSegundosComboBox.getSelectedItem(), TipoMensaje.AMPLIAR_TIEMPO_RESPUESTA));
                 return "Ejecución completada.";
             }
         };
