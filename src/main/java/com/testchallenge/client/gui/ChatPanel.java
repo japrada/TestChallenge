@@ -145,45 +145,45 @@ public class ChatPanel extends ConectablePanel {
      * <code>enviarChatButton</code>.
      */
     private void enviarChatButtonSwingWorker() {
+        String texto = messageTextArea.getText();
+        if (texto.equals("")) {
+            return;
+        }
 
         SwingWorker sw;
         sw = new SwingWorker() {
 
             @Override
             protected String doInBackground() throws Exception {
+                // *********  Enviar el mensaje al servidor (hilo de servicio TestChallengeServerThread) *********
+                Mensaje mensaje;
 
-                String texto = messageTextArea.getText();
-
-                if (!texto.equals("")) {
-                    // Escribir el mensaje en el ChatTextArea
-                    chatTextArea.append(texto);
-                    chatTextArea.append("\n");
-
-                    // *********  Enviar el mensaje al servidor (hilo de servicio TestChallengeServerThread) *********
-                    Mensaje mensaje;
-
-                    if (texto.equals(TipoMensaje.BYE.toString())) {
-                        mensaje = new Mensaje(TipoMensaje.BYE);
-                    } else {
-                        mensaje = new Mensaje(texto);
-
-                    }
-                    out.writeObject(mensaje);
-                    out.flush();
-                    // ***************************************************************************************
-
-                    // Establece la nueva posición del cursor
-                    chatTextArea.setCaretPosition(chatTextArea.getText().length());
-                    //chatTextArea.getCaret().setVisible(true);
+                if (texto.equals(TipoMensaje.BYE.toString())) {
+                    mensaje = new Mensaje(TipoMensaje.BYE);
+                } else {
+                    mensaje = new Mensaje(texto);
                 }
 
+                enviarMensaje(mensaje);
+                // ***************************************************************************************
+
+                return "Ejecución completada.";
+            }
+
+            @Override
+            protected void done() {
+                // Escribir el mensaje en el ChatTextArea
+                chatTextArea.append(texto);
+                chatTextArea.append("\n");
+                // Establece la nueva posición del cursor
+                chatTextArea.setCaretPosition(chatTextArea.getText().length());
+                //chatTextArea.getCaret().setVisible(true);
+
                 logger.info(String.format("'%s': \"Enviando mensaje: '%s' \n",
-                        ChatPanel.class.getSimpleName(), messageTextArea.getText()));
+                        ChatPanel.class.getSimpleName(), texto));
 
                 messageTextArea.setText("");
                 messageTextArea.requestFocusInWindow();
-
-                return "Ejecución completada.";
             }
         };
 
@@ -197,23 +197,10 @@ public class ChatPanel extends ConectablePanel {
      *
      */
     private void borrarMensajesButtonSwingWorker() {
-
-        SwingWorker sw;
-        sw = new SwingWorker() {
-
-            @Override
-            protected String doInBackground() throws Exception {
-                chatTextArea.setText("");
-                // Establecer la nueva posición del cursor
-                chatTextArea.setCaretPosition(chatTextArea.getText().length());
-                chatTextArea.getCaret().setVisible(true);
-
-                return "Ejecución completada.";
-            }
-        };
-
-        // El SwingWorker se ejecuta en un thread distinto del de la ejecución principal
-        sw.execute();
+        chatTextArea.setText("");
+        // Establecer la nueva posición del cursor
+        chatTextArea.setCaretPosition(chatTextArea.getText().length());
+        chatTextArea.getCaret().setVisible(true);
     }
 
 }

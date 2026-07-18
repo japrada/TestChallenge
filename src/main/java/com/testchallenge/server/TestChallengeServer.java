@@ -83,6 +83,8 @@ public class TestChallengeServer extends Thread {
     private final Map<String, Integer> ranking;
     // Logger de la clase
     private final static Logger logger = Logger.getLogger(TestChallengeServer.class.getName());
+    private final static int HANDSHAKE_TIMEOUT_MILLIS = 10_000;
+    private final static int MAX_NICKNAME_LENGTH = 32;
 
     public static void main(String[] args) {
         // Recogemos los parámetros en el hilo principal
@@ -129,124 +131,161 @@ public class TestChallengeServer extends Thread {
             while (true) {
                 // El servidor se queda bloqueado a la espera de recibir una conexión
                 Socket clientDataSocket = serverSocket.accept();
+                try {
+                    //Esto se hace para que si el cliente no envía el mensaje de handshake en un tiempo prudencial, se cierre la coiónnex, 
+                    //Para prevenir posibles ataques o situaciones tio Slowloris o agotamiento de recursos. 
+                    clientDataSocket.setSoTimeout(HANDSHAKE_TIMEOUT_MILLIS);
 
-                // Obtener la información de dirección IP y puerto del socket de conexión del sistema cliente
-                String dirIPCliente = clientDataSocket.getInetAddress().toString();
-                int puertoCliente = clientDataSocket.getPort();
+                    // Obtener la información de dirección IP y puerto del socket de conexión del sistema cliente
+                    String dirIPCliente = clientDataSocket.getInetAddress().toString();
+                    int puertoCliente = clientDataSocket.getPort();
 
-                logger.info(String.format("'%s': Conexión establecida desde la dirección IP '%s' puerto '%d'.",
-                        TestChallengeServer.class.getSimpleName(), dirIPCliente, puertoCliente));
+                    logger.info(String.format("'%s': Conexión establecida desde la dirección IP '%s' puerto '%d'.",
+                            TestChallengeServer.class.getSimpleName(), dirIPCliente, puertoCliente));
 
-                // Se recibe la conexión y se obtienen los streams para la comunicación con el cliente
-                ObjectInputStream in = new ObjectInputStream(clientDataSocket.getInputStream());
-                ObjectOutputStream out = new ObjectOutputStream(clientDataSocket.getOutputStream());
+                    // Se recibe la conexión y se obtienen los streams para la comunicación con el cliente
+                    /* Aquí hemos aplicado el filtro de serialización para evitar ataques de deserialización remota.Ya que el servidor 
+                    * está deserializando objetos enviados por la red, es importante asegurarse de que solo se acepten objetos de tipos esperados y seguros.
+                     */
+                    ObjectInputStream in = new ObjectInputStream(clientDataSocket.getInputStream());
+                    in.setObjectInputFilter(SerializationFilters.messagesOnly());
+                    ObjectOutputStream out = new ObjectOutputStream(clientDataSocket.getOutputStream());
 
-                // Se ejecuta el siguiente protocolo:
-                // ---------------------------------
-                // 1º.- Recibir el nickname
-                Mensaje mensaje = (Mensaje) in.readObject();
-                String nickname = mensaje.getTexto();
-                logger.info(String.format("'%s': Validando el nickname '%s' del usuario ...",
-                        TestChallengeServer.class.getSimpleName(), nickname));
-
-                // 2º.- Comprobar si el nickname del cliente es único o ya está en uso
-                TestChallengeServerThread testChallengeServerThread = new TestChallengeServerThread(nickname);
-
-                // La clase TestChallengeServerThread reescribe el método equals para poder hacer comparaciones entre objetos
-                if (!clientesConectados.contains(testChallengeServerThread)) {
-                    // 3º.- Comunicar al cliente que su sesión se ha registrado en el chat
-                    out.writeObject(new Mensaje(TipoMensaje.NICKNAME_OK));
-                    out.flush();
-
-                    // 4º.- Comunicar al cliente los nicknames de los usuarios que están conectados
-                    String nicknamesConectados = getNicknamesConectadosMessage(nickname);
-                    out.writeObject(new Mensaje(nicknamesConectados));
-                    out.flush();
-
-                    // 5º.- TEMÁTICAS: Indicar al cliente las temáticas disponibles (carpetas en el directorio base)
-                    String[] tematicas = getTematicas();
-                    out.writeObject(new Mensaje(tematicas));
-                    out.flush();
-
-                    logger.info(String.format("'%s': Sesión con el nickname '%s' registrada correctamente.",
-                            TestChallengeServer.class.getSimpleName(), nickname));
-
-                    // 6º.- Inicializar el hilo de procesamiento del cliente en el lado del servidor
-                    testChallengeServerThread.setClientDataSocket(clientDataSocket);
-                    // Se pasa al hilo los streams de lectura y escritura para la comunicación, que ya están inicializados
-                    testChallengeServerThread.setClientDataIn(in);
-                    testChallengeServerThread.setClientDataOut(out);
-                    // Se pasa la referencia al objeto padre que ha instanciado el thread de servicio. Esto le permitirá
-                    // al hilo hijo acceder a los métodos del padre para realizar determinadas operaciones. 
-                    testChallengeServerThread.setTestChallengeServer(this);
-
-                    // 8º.- RANKING: Enviar el ranking actual al nuevo cliente
-                    logger.info(String.format("'%s': Enviando el ranking actual a '%s'.",
-                            TestChallengeServer.class.getSimpleName(), nickname));
-                    out.writeObject(new Mensaje(new Ranking(ranking), TipoMensaje.RANKING_ACTUAL));
-                    out.flush();
-
-                    // 9º.- FLAG TEST EN EJECUCION: Enviar el flag de test iniciado al nuevo cliente                    
-                    out.writeObject(new Mensaje(testIniciado, TipoMensaje.TEST_EN_EJECUCION));
-                    out.flush();
-
-                    if (testIniciado) {
-                        logger.info(String.format("'%s': Enviando el flag que indica que hay un test en ejecución a '%s'.",
-                                TestChallengeServer.class.getSimpleName(), nickname));
-
-                        // Enviar un mensaje al cliente con la parametrización del test
-                        out.writeObject((new Mensaje(testServer.getMensajeInicioTest())));
-                        out.flush();
-                        
-                        // Enviar la pregunta al cliente 
-                        Pregunta preguntaEnviada = testServer.getPreguntaEnviada();
-                        logger.info(String.format("'%s': Enviando la pregunta al usuario '%s' recién conectado.",
-                                TestChallengeServer.class.getSimpleName(), nickname));
-                        
-                        out.writeObject(new Mensaje(preguntaEnviada, TipoMensaje.TEST_PREGUNTA));
-                        out.flush();
-
-                        // Incializar la puntuación del usuario para la pregunta enviada cuando se incorpora a un test iniciado
-                        testServer.inicializarPuntuacionConTestIniciado(nickname);
+                    // Se ejecuta el siguiente protocolo:
+                    // ---------------------------------
+                    // 1º.- Recibir el nickname
+                    Mensaje mensaje = (Mensaje) in.readObject();
+                    //Aquí, hemos añadido una validación extra para que se asegure que el mensaje recibido es del tipo esperado y no es nulo. Esto ayuda a prevenir posibles ataques de deserialización remota.
+                    if (mensaje == null || mensaje.getTipo() != TipoMensaje.TEXTO) {
+                        throw new IOException("Mensaje de handshake no válido.");
                     }
 
-                    // 10º.- FLAG TEST PAUSADO: Enviar el flag de test pausado al nuevo cliente
-                    out.writeObject(new Mensaje(testPausado, TipoMensaje.TEST_PAUSADO));
-                    out.flush();
-                    
-                    if (testPausado) {
-                        logger.info(String.format("'%s': Enviando el flag que indica que el test está pausado a '%s'.",
-                                TestChallengeServer.class.getSimpleName(), nickname));
+                    String nickname = mensaje.getTexto();
+                    logger.info(String.format("'%s': Validando el nickname '%s' del usuario ...",
+                            TestChallengeServer.class.getSimpleName(), nickname));
+
+                    /*
+                    Anteriormente se hacía la siguiente validación:if (!clientesConectados.contains(testChallengeServerThread))
+                    Simplemente evitaba que el nickname estuviera repetido.
+                    Con esta nueva validación, comprobamos más cosas.  
+                    */
+
+                    if (!isNicknameValido(nickname)) {
+                        out.writeObject(new Mensaje(TipoMensaje.NICKNAME_KO));
+                        out.flush();
+                        clientDataSocket.close();
+                        logger.info(String.format("'%s': Nickname rechazado por formato no válido.",
+                                TestChallengeServer.class.getSimpleName()));
+                        continue;
                     }
 
-                    // NOTA: el orden de las operaciones 11 y 12 es importante para que no se produzcan problemas
-                    // en el envío de mensajes.
-                    
-                    // 11º.- Añadir el cliente a la lista de clientes conectados
-                    registrarConexion(testChallengeServerThread);
+                    // 2º.- Comprobar si el nickname del cliente es único o ya está en uso
+                    TestChallengeServerThread testChallengeServerThread = new TestChallengeServerThread(nickname);
 
-                    // 12º.- Arrancar el hilo de servicio para el nuevo cliente de chat (de ese modo,
-                    // el cliente empieza a recibir notificaciones desde el servidor (TIMER_TICK, etc):
-                    // Ver clase TestChallengeClientThread.java
-                    testChallengeServerThread.start();
+                    // La clase TestChallengeServerThread reescribe el método equals para poder hacer comparaciones entre objetos
+                    if (!clientesConectados.contains(testChallengeServerThread)) {
+                        // 3º.- Comunicar al cliente que su sesión se ha registrado en el chat
+                        out.writeObject(new Mensaje(TipoMensaje.NICKNAME_OK));
+                        out.flush();
 
-                    logger.info(String.format("'%s': Thread de servicio para '%s' arrancado.",
-                            TestChallengeServer.class.getSimpleName(), nickname));
+                        // 4º.- Comunicar al cliente los nicknames de los usuarios que están conectados
+                        String nicknamesConectados = getNicknamesConectadosMessage(nickname);
+                        out.writeObject(new Mensaje(nicknamesConectados));
+                        out.flush();
 
-                } else {
-                    // Se le informa al cliente que el nickname ya está en uso y que no se puede iniciar la sesión
-                    out.writeObject(new Mensaje(TipoMensaje.NICKNAME_KO));
-                    out.flush();
+                        // 5º.- TEMÁTICAS: Indicar al cliente las temáticas disponibles (carpetas en el directorio base)
+                        String[] tematicas = getTematicas();
+                        out.writeObject(new Mensaje(tematicas));
+                        out.flush();
 
-                    // y se muestra el mensaje en la consola del servidor
-                    logger.info(String.format("'%s': El nickname '%s' ya se encuentra registrado.",
-                            TestChallengeServer.class.getSimpleName(), nickname));
+                        logger.info(String.format("'%s': Sesión con el nickname '%s' registrada correctamente.",
+                                TestChallengeServer.class.getSimpleName(), nickname));
 
-                    clientDataSocket.close();
+                        // 6º.- Inicializar el hilo de procesamiento del cliente en el lado del servidor
+                        testChallengeServerThread.setClientDataSocket(clientDataSocket);
+                        // Se pasa al hilo los streams de lectura y escritura para la comunicación, que ya están inicializados
+                        testChallengeServerThread.setClientDataIn(in);
+                        testChallengeServerThread.setClientDataOut(out);
+                        // Se pasa la referencia al objeto padre que ha instanciado el thread de servicio. Esto le permitirá
+                        // al hilo hijo acceder a los métodos del padre para realizar determinadas operaciones. 
+                        testChallengeServerThread.setTestChallengeServer(this);
+
+                        // 8º.- RANKING: Enviar el ranking actual al nuevo cliente
+                        logger.info(String.format("'%s': Enviando el ranking actual a '%s'.",
+                                TestChallengeServer.class.getSimpleName(), nickname));
+                        out.writeObject(new Mensaje(new Ranking(ranking), TipoMensaje.RANKING_ACTUAL));
+                        out.flush();
+
+                        // 9º.- FLAG TEST EN EJECUCION: Enviar el flag de test iniciado al nuevo cliente                    
+                        out.writeObject(new Mensaje(testIniciado, TipoMensaje.TEST_EN_EJECUCION));
+                        out.flush();
+
+                        if (testIniciado) {
+                            logger.info(String.format("'%s': Enviando el flag que indica que hay un test en ejecución a '%s'.",
+                                    TestChallengeServer.class.getSimpleName(), nickname));
+
+                            // Enviar un mensaje al cliente con la parametrización del test
+                            out.writeObject((new Mensaje(testServer.getMensajeInicioTest())));
+                            out.flush();
+
+                            // Enviar la pregunta al cliente 
+                            Pregunta preguntaEnviada = testServer.getPreguntaEnviada();
+                            logger.info(String.format("'%s': Enviando la pregunta al usuario '%s' recién conectado.",
+                                    TestChallengeServer.class.getSimpleName(), nickname));
+
+                            out.writeObject(new Mensaje(preguntaEnviada, TipoMensaje.TEST_PREGUNTA));
+                            out.flush();
+
+                            // Incializar la puntuación del usuario para la pregunta enviada cuando se incorpora a un test iniciado
+                            testServer.inicializarPuntuacionConTestIniciado(nickname);
+                        }
+
+                        // 10º.- FLAG TEST PAUSADO: Enviar el flag de test pausado al nuevo cliente
+                        out.writeObject(new Mensaje(testPausado, TipoMensaje.TEST_PAUSADO));
+                        out.flush();
+
+                        if (testPausado) {
+                            logger.info(String.format("'%s': Enviando el flag que indica que el test está pausado a '%s'.",
+                                    TestChallengeServer.class.getSimpleName(), nickname));
+                        }
+
+                        // NOTA: el orden de las operaciones 11 y 12 es importante para que no se produzcan problemas
+                        // en el envío de mensajes.
+
+                        // 11º.- Añadir el cliente a la lista de clientes conectados
+                        registrarConexion(testChallengeServerThread);
+
+                        // 12º.- Arrancar el hilo de servicio para el nuevo cliente de chat (de ese modo,
+                        // el cliente empieza a recibir notificaciones desde el servidor (TIMER_TICK, etc):
+                        // Ver clase TestChallengeClientThread.java
+                        clientDataSocket.setSoTimeout(0);
+                        testChallengeServerThread.start();
+
+                        logger.info(String.format("'%s': Thread de servicio para '%s' arrancado.",
+                                TestChallengeServer.class.getSimpleName(), nickname));
+
+                    } else {
+                        // Se le informa al cliente que el nickname ya está en uso y que no se puede iniciar la sesión
+                        out.writeObject(new Mensaje(TipoMensaje.NICKNAME_KO));
+                        out.flush();
+
+                        // y se muestra el mensaje en la consola del servidor
+                        logger.info(String.format("'%s': El nickname '%s' ya se encuentra registrado.",
+                                TestChallengeServer.class.getSimpleName(), nickname));
+
+                        clientDataSocket.close();
+                    }
+                } catch (IOException | ClassNotFoundException | ClassCastException ex) {
+                    logger.severe(ex.getMessage());
+                    try {
+                        clientDataSocket.close();
+                    } catch (IOException closeEx) {
+                        logger.severe(closeEx.getMessage());
+                    }
                 }
             } // while (true)
 
-        } catch (IOException | ClassNotFoundException ex) {
+        } catch (IOException ex) {
             logger.severe(ex.getMessage());
         } finally {
             logger.info(String.format("'%s': Servidor finalizado.", TestChallengeServer.class.getSimpleName()));
@@ -270,8 +309,8 @@ public class TestChallengeServer extends Thread {
      * @return lista de objetos de tipo <code>TestChallengeServerThread</code> que gestionan las comunicaciones de cada
      * uno de los clientes de clientes conectados al chat.
      */
-    public List<TestChallengeServerThread> getClientesConectados() {
-        return clientesConectados;
+    public List<TestChallengeServerThread> getClientesConectados() { //Es mejor devolver la copia. 
+        return new ArrayList<>(clientesConectados);
     }
 
     /**
@@ -322,8 +361,7 @@ public class TestChallengeServer extends Thread {
         for (TestChallengeServerThread cst : clientesConectados) {
             if (!cst.getNickname().equals(nickname)) {
                 try {
-                    cst.getClientDataOut().writeObject(new Mensaje(TipoMensaje.INICIAR_TEST));
-                    cst.getClientDataOut().flush();
+                    cst.send(new Mensaje(TipoMensaje.INICIAR_TEST));
                 } catch (IOException ex) {
                     logger.severe(ex.getMessage());
                 }
@@ -447,6 +485,15 @@ public class TestChallengeServer extends Thread {
                 .toArray(String[]::new);
     }
 
+    private boolean isNicknameValido(String nickname) {
+        return nickname != null
+                && !nickname.isBlank()
+                && nickname.length() <= MAX_NICKNAME_LENGTH
+                && nickname.chars().noneMatch(Character::isISOControl)
+                && !nickname.contains("@")
+                && !nickname.contains(",");
+    }
+
     /**
      * Registra la desconexión de un usuario del chat, eliminándolo de la lista de usuarios conectados y cerrando el
      * socket de conexión con el cliente.
@@ -500,13 +547,11 @@ public class TestChallengeServer extends Thread {
                 for (TestChallengeServerThread cst : clientesConectados) {
                     logger.info(String.format("'%s': Enviando notificación a '%s'.",
                             TestChallengeServer.class.getSimpleName(), cst.getNickname()));
-                    ObjectOutputStream out = cst.getClientDataOut();
                     Mensaje mensaje = new Mensaje(
                             String.format("'%s': El proceso servidor ha finalizado.",
                                     TestChallengeServer.class.getSimpleName()));
                     try {
-                        out.writeObject(mensaje);
-                        out.flush();
+                        cst.send(mensaje);
                     } catch (IOException ex) {
                         logger.severe(ex.getMessage());
                     }

@@ -189,8 +189,7 @@ public class ConfiguracionPanel extends ConectablePanel {
                     pregunta.setTematica(getTematica());
                     // Enviar la pregunta al servidor
                     Mensaje mensaje = new Mensaje(pregunta, TipoMensaje.PREGUNTA_ENVIAR);
-                    out.writeObject(mensaje);
-                    out.flush();
+                    enviarMensaje(mensaje);
                 } catch (IOException ex) {
                     logger.severe(ex.getMessage());
                 }

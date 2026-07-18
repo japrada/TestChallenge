@@ -366,8 +366,7 @@ public class TestPanel extends ConectablePanel {
                             configuracionPanel.getTiempoLimite());
 
                     // 3. Enviar el mensaje INICIAR_TEST al servidor para que arranque el test
-                    out.writeObject(new Mensaje(configuracion, TipoMensaje.INICIAR_TEST));
-                    out.flush();
+                    enviarMensaje(new Mensaje(configuracion, TipoMensaje.INICIAR_TEST));
                     // *************************************************
                 }
                 return "Ejecución completada.";

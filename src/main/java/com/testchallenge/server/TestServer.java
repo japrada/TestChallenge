@@ -56,6 +56,9 @@ import org.jaudiotagger.tag.TagException;
  * @author japrada
  */
 public class TestServer extends Thread {
+    //El atributo volatile, obliga a Java a leer el valor actualizado desde memoria principal. Sin embargo, 
+    //no garantiza la atomicidad de las operaciones de lectura y escritura. Que quiere decir atomicidad:
+    //Si un hilo está leyendo o escribiendo una variable, ningún otro hilo puede leer o escribir esa variable hasta que el primer hilo haya terminado.
 
     // Referencia al hilo que ejecuta el servidor de chat desde el que se arranca el servicio de test
     private TestChallengeServer testChallengeServer;
@@ -88,19 +91,19 @@ public class TestServer extends Thread {
     // Segundos para la cuenta atrás del test (por defecto, arranca 10 segundos después de la haber hecho la solicitud)
     private static final int DEFAULT_START_TIME = 10;
     // Número de segundos que dispone el usuario para enviar la respuesta
-    private int segundos = DEFAULT_START_TIME;
+    private volatile int segundos = DEFAULT_START_TIME;
     // Subdirectorio en el que se encuentran las imagenes de las preguntas  
     private static final String SUBDIRECTORIO_MULTIMEDIA = "Multimedia";
     // Flag para indicar que se desea interrumpir la cuenta atrás
-    private boolean interrumpirCuentaAtras = false;
+    private volatile boolean interrumpirCuentaAtras = false;
     // Ampliación de tiempo de respuesta (en segundos)
     private int segundosAmpliacionTiempoRespuesta = 0;
     // Flag para indicar que la pregunta ha sido respondida correctamente (y es la primera vez)
     private boolean preguntaContestadaCorrectamente = false;
     // Flag que indica si el test ha sido pausado o no para controlar la cuenta atrás
-    private Boolean isPaused;
+    private volatile Boolean isPaused;
     // Flag que indica que el test ha sido terminado por el TestChallengeServer (no hay que actualizar el ranking)
-    private Boolean isTerminatedByServer;
+    private volatile Boolean isTerminatedByServer;
     // Fecha y hora en la que el se inicia el test
     private Date startDate;
     // Fecha y hora en la que finaliza el test
@@ -711,8 +714,7 @@ public class TestServer extends Thread {
 
         try {
             for (TestChallengeServerThread cst : clientesConectados) {
-                cst.getClientDataOut().writeObject(mensaje);
-                cst.getClientDataOut().flush();
+                cst.send(mensaje);
             }
         } catch (IOException ioe) {
             logger.severe(ioe.getMessage());
@@ -728,8 +730,7 @@ public class TestServer extends Thread {
     private synchronized void enviarMensaje(Mensaje mensaje, String nickname) {
         try {
             TestChallengeServerThread cst = testChallengeServer.getClienteConectado(nickname);
-            cst.getClientDataOut().writeObject(mensaje);
-            cst.getClientDataOut().flush();
+            cst.send(mensaje);  
         } catch (IOException ioe) {
             logger.severe(ioe.getMessage());
         }

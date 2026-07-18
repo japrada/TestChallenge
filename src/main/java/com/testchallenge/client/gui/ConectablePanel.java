@@ -18,6 +18,8 @@
 
 package com.testchallenge.client.gui;
 
+import com.testchallenge.model.Mensaje;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import javax.swing.BorderFactory;
@@ -91,5 +93,12 @@ public class ConectablePanel extends JPanel implements IConectable {
     @Override
     public ObjectOutputStream getOutputStream() {
         return this.out;
+    }
+
+    protected void enviarMensaje(Mensaje mensaje) throws IOException {
+        synchronized (out) {
+            out.writeObject(mensaje);
+            out.flush();
+        }
     }
 }

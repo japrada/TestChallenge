@@ -36,6 +36,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingUtilities;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
@@ -62,8 +63,8 @@ public class MP3Player extends PopupWindow implements ActionListener {
     private Player player;
     private final byte[] audioData;
 
-    private boolean paused = false;
-    private boolean playing = false;
+    private volatile boolean paused = false;
+    private volatile boolean playing = false;
 
     private final long secondsLength;
     private final String secondsLengthString;
@@ -175,14 +176,15 @@ public class MP3Player extends PopupWindow implements ActionListener {
 
                 player = new Player(multimediaDataInputStream);
 
-                buttonPlay.setText("Pause");
-                buttonPlay.setIcon(iconPause);
+                SwingUtilities.invokeLater(() -> {
+                    buttonPlay.setText("Pause");
+                    buttonPlay.setIcon(iconPause);
+                    sliderTime.setMaximum((int) secondsLength);
+                    labelDuration.setText(secondsLengthString);
+                });
                 paused = false;
 
                 playing = true;
-
-                sliderTime.setMaximum((int) secondsLength);
-                labelDuration.setText(secondsLengthString);
 
                 player.play();
 
@@ -190,8 +192,10 @@ public class MP3Player extends PopupWindow implements ActionListener {
                     playing = false;
                     paused = false;
 
-                    buttonPlay.setText("Play");
-                    buttonPlay.setIcon(iconPlay);
+                    SwingUtilities.invokeLater(() -> {
+                        buttonPlay.setText("Play");
+                        buttonPlay.setIcon(iconPlay);
+                    });
                     timer.interrupt();
 
                     multimediaDataInputStream = new ByteArrayInputStream(this.audioData);
